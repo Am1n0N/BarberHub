@@ -65,6 +65,12 @@ docker-compose up -d
 
 This starts PostgreSQL, the backend API (port 3001), and the frontend (port 3000).
 
+After the containers are running, seed the database with initial data:
+
+```bash
+docker-compose exec backend npx prisma db seed
+```
+
 ### Option 2: Manual Setup
 
 **1. Database**
@@ -79,6 +85,7 @@ cp .env.example .env          # Edit with your database URL and secrets
 npm install
 npx prisma generate
 npx prisma migrate dev         # Creates tables
+npx prisma db seed             # Seeds the database with initial data
 npm run dev                    # Starts on http://localhost:3001
 ```
 

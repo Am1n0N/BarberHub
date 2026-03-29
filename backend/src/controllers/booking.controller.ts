@@ -13,7 +13,11 @@ export class BookingController {
       let clientId: string;
 
       if (req.user) {
-        // Authenticated user — use their ID directly
+        // Authenticated user — validate they exist in database
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!user) {
+          throw Object.assign(new Error('User not found'), { statusCode: 401 });
+        }
         clientId = req.user.id;
       } else {
         // Anonymous booking — require name and phone
