@@ -106,8 +106,7 @@ export default function ShopMap({ shops, locale }: ShopMapProps) {
       mapInstanceRef.current?.remove();
       mapInstanceRef.current = null;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shops, locale]);
+  }, [shops, locale, router]);
 
   return (
     <div

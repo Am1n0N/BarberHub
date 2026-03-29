@@ -142,6 +142,27 @@ enum QueueStatus {
   CANCELLED
 }
 
+model ShopRequest {
+  id          String            @id @default(uuid())
+  ownerName   String
+  ownerPhone  String
+  shopName    String
+  address     String
+  city        String
+  message     String?
+  status      ShopRequestStatus @default(PENDING)
+  reviewNote  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+enum ShopRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Payout {
   id           String   @id @default(uuid())
   barberId     String

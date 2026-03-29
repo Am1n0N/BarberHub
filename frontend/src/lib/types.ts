@@ -118,6 +118,52 @@ export interface User {
   _id: string;
   name: string;
   phone: string;
-  role: 'owner' | 'barber' | 'client';
+  role: 'owner' | 'barber' | 'client' | 'OWNER' | 'BARBER' | 'CLIENT' | 'ADMIN';
   shop?: string;
+}
+
+export type ShopRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface ShopRequest {
+  id: string;
+  ownerName: string;
+  ownerPhone: string;
+  shopName: string;
+  address: string;
+  city: string;
+  message?: string;
+  status: ShopRequestStatus;
+  reviewNote?: string;
+  reviewedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminShop {
+  id: string;
+  name: string;
+  slug: string;
+  address: string;
+  city: string;
+  phone: string;
+  isActive: boolean;
+  latitude: number | null;
+  longitude: number | null;
+  createdAt: string;
+  owner: { id: string; name: string; phone: string };
+  _count: { barbers: number; bookings: number };
+}
+
+export interface AdminShopsResult {
+  shops: AdminShop[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface AdminRequestsResult {
+  requests: ShopRequest[];
+  total: number;
+  page: number;
+  limit: number;
 }

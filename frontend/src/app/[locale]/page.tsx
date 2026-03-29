@@ -157,6 +157,32 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
           </Link>
         </div>
       </section>
+
+      {/* Join BarberHub CTA */}
+      <section className="py-20 bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
+            <span className="text-xl">🚀</span>
+            <span className="text-white/90 text-sm font-medium">
+              {isRtl ? 'انضم معنا' : 'Rejoignez-nous'}
+            </span>
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            {isRtl ? 'عندك حانوت؟ انضم لـ BarberHub' : 'Vous avez un salon\u00a0? Rejoignez BarberHub'}
+          </h2>
+          <p className="text-gray-300 max-w-xl mx-auto mb-8 text-lg">
+            {isRtl
+              ? 'سجّل حانوتك وابدأ تستقبل حجوزات وتنظّم الصف من اليوم. مجاني وسريع!'
+              : 'Inscrivez votre salon et commencez à recevoir des réservations dès aujourd\'hui. Gratuit et rapide\u00a0!'}
+          </p>
+          <Link
+            href={`/${locale}/join`}
+            className="inline-block px-10 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
+          >
+            {isRtl ? '📨 سجّل حانوتك تو' : '📨 Inscrire mon salon'}
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

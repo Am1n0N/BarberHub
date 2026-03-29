@@ -88,4 +88,38 @@ export const api = {
     fetchApi<import('./types').Barber>(`/barbers/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   toggleBarberAvailability: (id: string) =>
     fetchApi<import('./types').Barber>(`/barbers/${id}/toggle-availability`, { method: 'PATCH' }),
+
+  // Admin
+  adminListShops: (page = 1) =>
+    fetchApi<import('./types').AdminShopsResult>(`/admin/shops?page=${page}`),
+  adminCreateShop: (data: {
+    ownerName: string; ownerPhone: string; ownerPassword: string;
+    shopName: string; address: string; city: string; phone: string;
+    latitude?: number; longitude?: number;
+  }) =>
+    fetchApi<{ shop: import('./types').AdminShop; user: import('./types').User }>('/admin/shops', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  adminToggleShopStatus: (id: string) =>
+    fetchApi<import('./types').AdminShop>(`/admin/shops/${id}/toggle`, { method: 'PATCH' }),
+  adminListRequests: (status?: string, page = 1) =>
+    fetchApi<import('./types').AdminRequestsResult>(
+      `/admin/requests?page=${page}${status ? `&status=${status}` : ''}`
+    ),
+  adminReviewRequest: (id: string, action: 'APPROVED' | 'REJECTED', opts?: { reviewNote?: string; ownerPassword?: string }) =>
+    fetchApi<import('./types').ShopRequest>(`/admin/requests/${id}/review`, {
+      method: 'PATCH',
+      body: JSON.stringify({ action, ...opts }),
+    }),
+
+  // Join requests (public)
+  submitJoinRequest: (data: {
+    ownerName: string; ownerPhone: string; shopName: string;
+    address: string; city: string; message?: string;
+  }) =>
+    fetchApi<import('./types').ShopRequest>('/join-requests', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
