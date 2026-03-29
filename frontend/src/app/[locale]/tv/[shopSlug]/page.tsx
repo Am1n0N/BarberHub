@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { QRCodeSVG } from 'qrcode.react';
 import { getTranslation } from '@/i18n/config';
 import { api } from '@/lib/api';
 import { Shop, QueueEntry } from '@/lib/types';
@@ -18,6 +19,11 @@ export default function TvDisplayPage() {
   const [shop, setShop] = useState<Shop | null>(null);
   const [queue, setQueue] = useState<QueueEntry[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [bookingUrl, setBookingUrl] = useState('');
+
+  useEffect(() => {
+    setBookingUrl(`${window.location.origin}/${locale}/book/${shopSlug}`);
+  }, [locale, shopSlug]);
 
   useEffect(() => {
     async function load() {
@@ -163,11 +169,15 @@ export default function TvDisplayPage() {
 
           {/* QR Code area */}
           <div className="mt-8 bg-white/10 rounded-2xl p-6 text-center">
-            <p className="text-lg text-gray-300 mb-2">{t('tv.scanToBook')}</p>
-            <div className="w-32 h-32 bg-white rounded-xl mx-auto flex items-center justify-center">
-              <span className="text-5xl">📱</span>
-            </div>
-            <p className="text-sm text-gray-400 mt-2">barberhub.tn/{shopSlug}</p>
+            <p className="text-lg text-gray-300 mb-4">{t('tv.scanToBook')}</p>
+            {bookingUrl ? (
+              <div className="bg-white rounded-xl p-3 w-fit mx-auto">
+                <QRCodeSVG value={bookingUrl} size={128} />
+              </div>
+            ) : (
+              <div className="w-32 h-32 bg-white/20 rounded-xl mx-auto animate-pulse" />
+            )}
+            <p className="text-sm text-gray-400 mt-3">{bookingUrl || `.../${shopSlug}`}</p>
           </div>
         </div>
       </div>
