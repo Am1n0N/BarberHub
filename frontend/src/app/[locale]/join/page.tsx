@@ -11,6 +11,7 @@ import Card from '@/components/ui/Card';
 interface JoinForm {
   ownerName: string;
   ownerPhone: string;
+  ownerEmail: string;
   shopName: string;
   address: string;
   city: string;
@@ -20,6 +21,7 @@ interface JoinForm {
 const emptyForm: JoinForm = {
   ownerName: '',
   ownerPhone: '',
+  ownerEmail: '',
   shopName: '',
   address: '',
   city: '',
@@ -46,6 +48,7 @@ export default function JoinPage() {
     try {
       await api.submitJoinRequest({
         ...form,
+        ownerEmail: form.ownerEmail || undefined,
         message: form.message || undefined,
       });
       setSubmitted(true);
@@ -163,6 +166,13 @@ export default function JoinPage() {
                   onChange={(e) => setForm({ ...form, ownerPhone: e.target.value })}
                   placeholder={isRtl ? 'مثلاً: 55123456' : 'Ex : 55 123 456'}
                 />
+                <Input
+                  label={isRtl ? 'البريد الإلكتروني (باش نبعثولك بيانات الدخول)' : 'Email (pour recevoir vos identifiants)'}
+                  type="email"
+                  value={form.ownerEmail}
+                  onChange={(e) => setForm({ ...form, ownerEmail: e.target.value })}
+                  placeholder={isRtl ? 'مثلاً: ahmed@gmail.com' : 'Ex : ahmed@gmail.com'}
+                />
               </div>
             </div>
 
@@ -212,8 +222,8 @@ export default function JoinPage() {
 
             <p className="text-center text-xs text-gray-400">
               {isRtl
-                ? 'بعد مراجعة الطلب، فريقنا باش يتصل بيك ليعطيك بيانات الدخول'
-                : "Après examen, notre équipe vous contactera pour vous fournir vos identifiants"}
+                ? 'بعد مراجعة الطلب، باش تجيك بيانات الدخول على الإيمايل والواتساب'
+                : "Après examen, vous recevrez vos identifiants par email et WhatsApp"}
             </p>
           </div>
         </Card>

@@ -115,7 +115,7 @@ export const api = {
 
   // Join requests (public)
   submitJoinRequest: (data: {
-    ownerName: string; ownerPhone: string; shopName: string;
+    ownerName: string; ownerPhone: string; ownerEmail?: string; shopName: string;
     address: string; city: string; message?: string;
   }) =>
     fetchApi<import('./types').ShopRequest>('/join-requests', {

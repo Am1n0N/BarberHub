@@ -1,6 +1,8 @@
 import { PrismaClient, Prisma } from '@prisma/client';
+import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { generateSlug } from '../utils/helpers';
+import { notifyOwnerApproved, NotificationResult } from './notification.service';
 
 const prisma = new PrismaClient();
 
@@ -110,6 +112,7 @@ export class AdminService {
   async submitJoinRequest(data: {
     ownerName: string;
     ownerPhone: string;
+    ownerEmail?: string;
     shopName: string;
     address: string;
     city: string;
@@ -139,8 +142,10 @@ export class AdminService {
       throw Object.assign(new Error('Request already reviewed'), { statusCode: 409 });
     }
 
+    let notification: NotificationResult | null = null;
+
     if (action === 'APPROVED') {
-      const password = options.ownerPassword ?? Math.random().toString(36).slice(-8);
+      const password = options.ownerPassword ?? crypto.randomBytes(6).toString('base64url').slice(0, 8);
       await this.createShopWithOwner({
         ownerName: request.ownerName,
         ownerPhone: request.ownerPhone,
@@ -150,9 +155,18 @@ export class AdminService {
         city: request.city,
         phone: request.ownerPhone,
       });
+
+      // Send credentials to the owner (email + WhatsApp)
+      notification = await notifyOwnerApproved({
+        ownerName: request.ownerName,
+        ownerPhone: request.ownerPhone,
+        ownerEmail: request.ownerEmail,
+        shopName: request.shopName,
+        password,
+      });
     }
 
-    return prisma.shopRequest.update({
+    const updated = await prisma.shopRequest.update({
       where: { id: requestId },
       data: {
         status: action,
@@ -160,6 +174,8 @@ export class AdminService {
         reviewedAt: new Date(),
       },
     });
+
+    return { ...updated, notification };
   }
 }
 

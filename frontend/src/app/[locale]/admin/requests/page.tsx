@@ -30,6 +30,7 @@ export default function AdminRequestsPage() {
   const [ownerPassword, setOwnerPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notificationResult, setNotificationResult] = useState<{ emailSent: boolean; whatsappUrl: string | null } | null>(null);
 
   const loadRequests = (f: FilterStatus = filter, p = 1) => {
     setLoading(true);
@@ -53,17 +54,22 @@ export default function AdminRequestsPage() {
   const handleReview = async () => {
     if (!selected) return;
     setError(null);
+    setNotificationResult(null);
     if (action === 'APPROVED' && ownerPassword.length > 0 && ownerPassword.length < 6) {
       setError(isRtl ? 'كلمة السر لازم تكون 6 خانات على الأقل' : 'Le mot de passe doit avoir au moins 6 caractères');
       return;
     }
     setSubmitting(true);
     try {
-      await api.adminReviewRequest(selected.id, action, {
+      const result = await api.adminReviewRequest(selected.id, action, {
         reviewNote: reviewNote || undefined,
         ownerPassword: action === 'APPROVED' ? (ownerPassword || undefined) : undefined,
       });
-      setSelected(null);
+      if (result.notification) {
+        setNotificationResult(result.notification);
+      } else {
+        setSelected(null);
+      }
       loadRequests(filter, page);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : (isRtl ? 'صار مشكل' : 'Une erreur est survenue'));
@@ -148,6 +154,7 @@ export default function AdminRequestsPage() {
                       </span>
                     </div>
                     <p className="text-sm text-gray-700">👤 {req.ownerName} · 📞 {req.ownerPhone}</p>
+                    {req.ownerEmail && <p className="text-sm text-gray-500">📧 {req.ownerEmail}</p>}
                     <p className="text-sm text-gray-500">📍 {req.address}, {req.city}</p>
                     {req.message && (
                       <p className="text-sm text-gray-600 mt-2 italic">&ldquo;{req.message}&rdquo;</p>
@@ -189,18 +196,66 @@ export default function AdminRequestsPage() {
       {/* Review modal */}
       <Modal
         isOpen={!!selected}
-        onClose={() => setSelected(null)}
+        onClose={() => { setSelected(null); setNotificationResult(null); }}
         title={
-          action === 'APPROVED'
-            ? (isRtl ? '✅ قبول الطلب' : '✅ Approuver la demande')
-            : (isRtl ? '❌ رفض الطلب' : '❌ Rejeter la demande')
+          notificationResult
+            ? (isRtl ? '📨 تم الإرسال' : '📨 Notification envoyée')
+            : action === 'APPROVED'
+              ? (isRtl ? '✅ قبول الطلب' : '✅ Approuver la demande')
+              : (isRtl ? '❌ رفض الطلب' : '❌ Rejeter la demande')
         }
       >
-        {selected && (
+        {selected && notificationResult && (
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-5xl mb-4">🎉</p>
+              <p className="text-lg font-bold text-gray-900 mb-2">
+                {isRtl ? 'الطلب تقبّل بنجاح!' : 'Demande approuvée avec succès\u00a0!'}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 text-sm space-y-2">
+              <p className="font-semibold text-gray-900">{selected.shopName}</p>
+              <div className="flex items-center gap-2">
+                <span>{notificationResult.emailSent ? '✅' : '⚠️'}</span>
+                <span className="text-gray-600">
+                  {notificationResult.emailSent
+                    ? (isRtl ? 'الإيمايل تبعث بنجاح' : 'Email envoyé avec succès')
+                    : (isRtl ? 'ما تبعثش الإيمايل (ما فمّاش إيمايل أو SMTP غير مضبوط)' : 'Email non envoyé (pas d\'email ou SMTP non configuré)')}
+                </span>
+              </div>
+              {notificationResult.whatsappUrl && (
+                <div className="flex items-center gap-2">
+                  <span>💬</span>
+                  <span className="text-gray-600">
+                    {isRtl ? 'واتساب جاهز — كليك على الزر اللي تحت' : 'WhatsApp prêt — cliquez ci-dessous'}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {notificationResult.whatsappUrl && (
+              <a
+                href={notificationResult.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors text-sm"
+              >
+                💬 {isRtl ? 'ابعث على الواتساب' : 'Envoyer via WhatsApp'}
+              </a>
+            )}
+
+            <Button variant="ghost" className="w-full" onClick={() => { setSelected(null); setNotificationResult(null); }}>
+              {isRtl ? 'سكّر' : 'Fermer'}
+            </Button>
+          </div>
+        )}
+        {selected && !notificationResult && (
           <div className="space-y-4">
             <div className="bg-gray-50 rounded-xl p-4 text-sm">
               <p className="font-semibold text-gray-900">{selected.shopName}</p>
               <p className="text-gray-600">{selected.ownerName} · {selected.ownerPhone}</p>
+              {selected.ownerEmail && <p className="text-gray-500">📧 {selected.ownerEmail}</p>}
               <p className="text-gray-500">{selected.address}, {selected.city}</p>
             </div>
 

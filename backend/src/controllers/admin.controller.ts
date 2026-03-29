@@ -66,9 +66,9 @@ export class AdminController {
 
   async submitJoinRequest(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { ownerName, ownerPhone, shopName, address, city, message } = req.body;
+      const { ownerName, ownerPhone, ownerEmail, shopName, address, city, message } = req.body;
       const request = await adminService.submitJoinRequest({
-        ownerName, ownerPhone, shopName, address, city, message,
+        ownerName, ownerPhone, ownerEmail, shopName, address, city, message,
       });
       res.status(201).json(request);
     } catch (err) {

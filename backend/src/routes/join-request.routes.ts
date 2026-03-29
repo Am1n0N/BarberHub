@@ -11,6 +11,7 @@ router.post(
   validate([
     body('ownerName').notEmpty().withMessage('Your name is required'),
     body('ownerPhone').notEmpty().withMessage('Your phone number is required'),
+    body('ownerEmail').optional().isEmail().withMessage('Invalid email address'),
     body('shopName').notEmpty().withMessage('Shop name is required'),
     body('address').notEmpty().withMessage('Address is required'),
     body('city').notEmpty().withMessage('City is required'),

@@ -128,6 +128,7 @@ export interface ShopRequest {
   id: string;
   ownerName: string;
   ownerPhone: string;
+  ownerEmail?: string;
   shopName: string;
   address: string;
   city: string;
@@ -137,6 +138,10 @@ export interface ShopRequest {
   reviewedAt?: string;
   createdAt: string;
   updatedAt: string;
+  notification?: {
+    emailSent: boolean;
+    whatsappUrl: string | null;
+  };
 }
 
 export interface AdminShop {
