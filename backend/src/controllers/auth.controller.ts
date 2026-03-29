@@ -22,6 +22,15 @@ export class AuthController {
       next(err);
     }
   }
+
+  async getMe(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await authService.getMe(req.user!.id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const authController = new AuthController();

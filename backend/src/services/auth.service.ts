@@ -47,14 +47,25 @@ export class AuthService {
         phone: user.phone,
         name: user.name,
         role: user.role,
+        shop: undefined,
       },
       token,
     };
   }
 
+  async getMe(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { shop: { select: { id: true, name: true, slug: true } } },
+    });
+    if (!user) throw Object.assign(new Error('User not found'), { statusCode: 404 });
+    return { id: user.id, phone: user.phone, name: user.name, role: user.role, shop: user.shop };
+  }
+
   async login(phone: string, password: string) {
     const user = await prisma.user.findUnique({
       where: { phone },
+      include: { shop: { select: { id: true, name: true, slug: true } } },
     });
 
     if (!user) {
@@ -78,6 +89,7 @@ export class AuthService {
         phone: user.phone,
         name: user.name,
         role: user.role,
+        shop: user.shop ?? undefined,
       },
       token,
     };

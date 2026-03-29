@@ -72,9 +72,37 @@ router.post(
   (req, res, next) => shopController.addService(req, res, next)
 );
 
+router.patch(
+  '/:id/services/:serviceId',
+  authenticate,
+  authorize('OWNER', 'ADMIN'),
+  (req, res, next) => shopController.updateService(req as any, res, next)
+);
+
+router.delete(
+  '/:id/services/:serviceId',
+  authenticate,
+  authorize('OWNER', 'ADMIN'),
+  (req, res, next) => shopController.deleteService(req as any, res, next)
+);
+
 router.get(
   '/:id/services',
   (req, res, next) => shopController.getServices(req, res, next)
+);
+
+router.patch(
+  '/:id/barbers/:barberId',
+  authenticate,
+  authorize('OWNER', 'ADMIN'),
+  (req, res, next) => shopController.updateBarber(req as any, res, next)
+);
+
+router.patch(
+  '/:id/barbers/:barberId/toggle-availability',
+  authenticate,
+  authorize('OWNER', 'ADMIN'),
+  (req, res, next) => shopController.toggleBarberAvailability(req as any, res, next)
 );
 
 export default router;
