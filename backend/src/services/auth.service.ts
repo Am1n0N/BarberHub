@@ -56,16 +56,48 @@ export class AuthService {
   async getMe(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { shop: { select: { id: true, name: true, slug: true } } },
+      include: {
+        shop: { select: { id: true, name: true, slug: true } },
+        barber: {
+          select: {
+            id: true,
+            shopId: true,
+            isAvailable: true,
+            commissionRate: true,
+            shop: { select: { id: true, name: true, slug: true } },
+          },
+        },
+      },
     });
     if (!user) throw Object.assign(new Error('User not found'), { statusCode: 404 });
-    return { id: user.id, phone: user.phone, name: user.name, role: user.role, shop: user.shop };
+    return {
+      id: user.id,
+      phone: user.phone,
+      name: user.name,
+      email: user.email ?? undefined,
+      role: user.role,
+      shop: user.shop ?? user.barber?.shop ?? undefined,
+      barber: user.barber
+        ? { id: user.barber.id, isAvailable: user.barber.isAvailable, commissionRate: user.barber.commissionRate }
+        : undefined,
+    };
   }
 
   async login(phone: string, password: string) {
     const user = await prisma.user.findUnique({
       where: { phone },
-      include: { shop: { select: { id: true, name: true, slug: true } } },
+      include: {
+        shop: { select: { id: true, name: true, slug: true } },
+        barber: {
+          select: {
+            id: true,
+            shopId: true,
+            isAvailable: true,
+            commissionRate: true,
+            shop: { select: { id: true, name: true, slug: true } },
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -88,8 +120,12 @@ export class AuthService {
         id: user.id,
         phone: user.phone,
         name: user.name,
+        email: user.email ?? undefined,
         role: user.role,
-        shop: user.shop ?? undefined,
+        shop: user.shop ?? user.barber?.shop ?? undefined,
+        barber: user.barber
+          ? { id: user.barber.id, isAvailable: user.barber.isAvailable, commissionRate: user.barber.commissionRate }
+          : undefined,
       },
       token,
     };

@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
-const navItems = [
+const ownerNavItems = [
   { key: 'home', icon: '📊', path: '' },
   { key: 'queue', icon: '👥', path: '/queue' },
   { key: 'bookings', icon: '📅', path: '/bookings' },
@@ -12,6 +13,14 @@ const navItems = [
   { key: 'payouts', icon: '💰', path: '/payouts' },
   { key: 'services', icon: '🛠', path: '/services' },
   { key: 'settings', icon: '⚙️', path: '/settings' },
+];
+
+const barberNavItems = [
+  { key: 'home', icon: '📊', path: '' },
+  { key: 'queue', icon: '👥', path: '/queue' },
+  { key: 'bookings', icon: '📅', path: '/bookings' },
+  { key: 'payouts', icon: '💰', path: '/payouts' },
+  { key: 'profile', icon: '👤', path: '/profile' },
 ];
 
 const labelsFr: Record<string, string> = {
@@ -22,6 +31,7 @@ const labelsFr: Record<string, string> = {
   payouts: 'Paiements',
   services: 'Services',
   settings: 'Paramètres',
+  profile: 'Mon profil',
 };
 
 const labelsDerja: Record<string, string> = {
@@ -32,14 +42,19 @@ const labelsDerja: Record<string, string> = {
   payouts: 'الحسابات',
   services: 'الخدمات',
   settings: 'إعدادات',
+  profile: 'حسابي',
 };
 
 export default function Sidebar() {
   const params = useParams();
   const pathname = usePathname();
+  const { user } = useAuth();
   const locale = (params?.locale as string) || 'derja';
   const labels = locale === 'derja' ? labelsDerja : labelsFr;
   const basePath = `/${locale}/dashboard`;
+
+  const isBarber = user?.role?.toUpperCase() === 'BARBER';
+  const navItems = isBarber ? barberNavItems : ownerNavItems;
 
   return (
     <aside className="w-64 bg-white border-r border-gray-100 min-h-screen p-4 hidden lg:block">
@@ -49,6 +64,15 @@ export default function Sidebar() {
         </div>
         <span className="text-lg font-bold text-gray-900">BarberHub</span>
       </div>
+
+      {/* Role badge */}
+      {isBarber && (
+        <div className="mx-3 mb-4 px-3 py-1.5 bg-purple-50 border border-purple-100 rounded-lg">
+          <p className="text-xs font-medium text-purple-700">
+            ✂️ {locale === 'derja' ? 'حجّام' : 'Barbier'}
+          </p>
+        </div>
+      )}
 
       <nav className="space-y-1">
         {navItems.map((item) => {

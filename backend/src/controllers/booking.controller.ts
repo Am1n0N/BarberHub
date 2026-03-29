@@ -76,6 +76,20 @@ export class BookingController {
     }
   }
 
+  async getMyBarberBookings(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      // Look up the barber record for this user
+      const barber = await prisma.barber.findUnique({ where: { userId: req.user!.id } });
+      if (!barber) {
+        throw Object.assign(new Error('Barber profile not found'), { statusCode: 404 });
+      }
+      const bookings = await bookingService.getBookingsForBarber(barber.id);
+      res.json(bookings);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async cancelBooking(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const booking = await bookingService.cancelBookingByClient(

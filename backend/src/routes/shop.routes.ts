@@ -47,7 +47,13 @@ router.post(
   authenticate,
   authorize('OWNER', 'ADMIN'),
   validate([
-    body('userId').notEmpty().withMessage('User ID is required'),
+    body('name').notEmpty().withMessage('Barber name is required'),
+    body('phone').notEmpty().withMessage('Phone number is required'),
+    body('password')
+      .notEmpty()
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters'),
+    body('email').optional({ nullable: true }).isEmail().withMessage('Invalid email address'),
     body('commissionRate')
       .optional()
       .isFloat({ min: 0, max: 1 })

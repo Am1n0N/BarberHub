@@ -6,6 +6,7 @@ import queueRoutes from './queue.routes';
 import payoutRoutes from './payout.routes';
 import adminRoutes from './admin.routes';
 import joinRequestRoutes from './join-request.routes';
+import barberRoutes from './barber.routes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/queue', queueRoutes);
 router.use('/payouts', payoutRoutes);
 router.use('/admin', adminRoutes);
 router.use('/join-requests', joinRequestRoutes);
+router.use('/barbers', barberRoutes);
 
 export default router;

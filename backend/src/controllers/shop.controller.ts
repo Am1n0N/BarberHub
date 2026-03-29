@@ -64,14 +64,13 @@ export class ShopController {
 
   async addBarber(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { userId, commissionRate } = req.body;
-      const barber = await shopService.addBarber(
+      const { name, phone, password, email, commissionRate } = req.body;
+      const result = await shopService.addBarber(
         req.params.id as string,
         req.user!.id,
-        userId,
-        commissionRate
+        { name, phone, password, email, commissionRate }
       );
-      res.status(201).json(barber);
+      res.status(201).json(result);
     } catch (err) {
       next(err);
     }

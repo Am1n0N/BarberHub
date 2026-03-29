@@ -97,7 +97,9 @@
     "manageBarbers": "تصرّف في الحجّاما",
     "manageServices": "تصرّف في الخدمات",
     "viewPayouts": "شوف الحسابات",
-    "settings": "إعدادات"
+    "settings": "إعدادات",
+    "myBookings": "الرندي-فو متاعي",
+    "myPayouts": "الحسابات متاعي"
   },
   "payout": {
     "title": "الحسابات",
@@ -163,5 +165,16 @@
     "adminCtaPanel": "روح للإدارة",
     "adminCtaShops": "الحوانيت",
     "adminCtaRequests": "الطلبات"
+  },
+  "barberProfile": {
+    "title": "حسابي",
+    "subtitle": "معلوماتك وإعداداتك",
+    "available": "متوفّر",
+    "unavailable": "غير متوفّر",
+    "setUnavailable": "حط روحك غير متوفّر",
+    "setAvailable": "ارجع متوفّر",
+    "commission": "نسبة العمولة",
+    "commissionDesc": "نسبة حقّك من كل خدمة",
+    "updating": "يبدّل..."
   }
 }
