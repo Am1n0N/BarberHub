@@ -32,6 +32,7 @@ export default function TimeSlotPicker({
   const isRtl = locale === 'derja';
   const [slots, setSlots] = useState<SlotInfo[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [duration, setDuration] = useState(0);
 
   // Generate next 7 days
@@ -47,12 +48,14 @@ export default function TimeSlotPicker({
   const fetchSlots = useCallback(async (date: string) => {
     if (!shopId || !barberId || !serviceId || !date) return;
     setLoading(true);
+    setError(false);
     try {
       const result = await api.getAvailableSlots({ shopId, barberId, serviceId, date });
       setSlots(result.slots);
       setDuration(result.duration);
     } catch {
       setSlots([]);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -64,10 +67,6 @@ export default function TimeSlotPicker({
     }
   }, [selectedDate, fetchSlots]);
 
-  const handleDateChange = (date: string) => {
-    onDateChange(date);
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -78,7 +77,7 @@ export default function TimeSlotPicker({
           {dates.map((d) => (
             <button
               key={d.value}
-              onClick={() => handleDateChange(d.value)}
+              onClick={() => onDateChange(d.value)}
               className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 selectedDate === d.value
                   ? 'bg-blue-600 text-white shadow-md'
@@ -107,6 +106,11 @@ export default function TimeSlotPicker({
               <span className="ml-2 text-sm text-gray-500">
                 {isRtl ? 'يجيب الأوقات...' : 'Chargement des créneaux...'}
               </span>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-500">
+              <p className="text-3xl mb-2">⚠️</p>
+              <p>{isRtl ? 'ما نجمناش نجيبو الأوقات. جرّب مرة أخرى' : 'Impossible de charger les créneaux. Réessayez'}</p>
             </div>
           ) : slots.length === 0 ? (
             <div className="text-center py-8 text-gray-500">

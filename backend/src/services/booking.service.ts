@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const DEFAULT_SERVICE_DURATION_MIN = 30;
+
 /** Convert "HH:MM" to total minutes since midnight */
 function timeToMinutes(time: string): number {
   const [h, m] = time.split(':').map(Number);
@@ -93,7 +95,7 @@ export class BookingService {
     // Build occupied time ranges [startMin, endMin)
     const occupiedRanges = existingBookings.map((b) => {
       const startMin = timeToMinutes(b.timeSlot);
-      const endMin = startMin + (b.service?.durationMin ?? 30);
+      const endMin = startMin + (b.service?.durationMin ?? DEFAULT_SERVICE_DURATION_MIN);
       return { start: startMin, end: endMin };
     });
 
@@ -155,7 +157,7 @@ export class BookingService {
 
     const hasOverlap = existingBookings.some((b) => {
       const existingStart = timeToMinutes(b.timeSlot);
-      const existingEnd = existingStart + (b.service?.durationMin ?? 30);
+      const existingEnd = existingStart + (b.service?.durationMin ?? DEFAULT_SERVICE_DURATION_MIN);
       return newStart < existingEnd && newEnd > existingStart;
     });
 
