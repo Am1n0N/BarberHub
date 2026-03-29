@@ -26,6 +26,7 @@ export default function BarbersPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [newCommission, setNewCommission] = useState('50');
 
   const fetchBarbers = useCallback(async () => {
@@ -56,13 +57,13 @@ export default function BarbersPage() {
   };
 
   const handleAdd = async () => {
-    if (!newName.trim() || !newPhone.trim() || !shop) return;
+    if (!newName.trim() || !newPhone.trim() || !newPassword.trim() || !shop) return;
     try {
       // First register the barber user, then add to shop
       const { user } = await api.register({
         phone: newPhone,
         name: newName,
-        password: 'password123',
+        password: newPassword,
         role: 'BARBER',
       });
       await api.createBarber(shop.id, {
@@ -72,6 +73,7 @@ export default function BarbersPage() {
       await fetchBarbers();
       setNewName('');
       setNewPhone('');
+      setNewPassword('');
       setNewCommission('50');
       setShowAdd(false);
     } catch {
@@ -165,6 +167,13 @@ export default function BarbersPage() {
             value={newPhone}
             onChange={(e) => setNewPhone(e.target.value)}
             placeholder="55 XXX XXX"
+          />
+          <Input
+            label={isRtl ? 'كلمة السر' : 'Mot de passe'}
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder={isRtl ? 'كلمة سر الحجّام' : 'Mot de passe du barbier'}
           />
           <Input
             label={isRtl ? 'نسبة العمولة (%)' : 'Commission (%)'}

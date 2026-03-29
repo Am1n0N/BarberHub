@@ -29,7 +29,9 @@ export function transformService(service: any, locale = 'derja'): Service {
   return {
     _id: service.id ?? service._id,
     shop: service.shopId ?? service.shop,
-    name: service.nameDerja ?? service.name,
+    name: locale === 'derja'
+      ? (service.nameDerja ?? service.name)
+      : (service.nameFr ?? service.name),
     nameFr: service.nameFr,
     price: service.price,
     duration: service.durationMin ?? service.duration,

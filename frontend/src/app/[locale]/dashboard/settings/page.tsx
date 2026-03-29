@@ -90,14 +90,16 @@ export default function SettingsPage() {
   const handleSave = async () => {
     if (!shop) return;
     try {
+      const lat = latitude ? parseFloat(latitude) : undefined;
+      const lng = longitude ? parseFloat(longitude) : undefined;
       await api.updateShop(shop.id, {
         name: shopName,
         address,
         city,
         phone,
         openingHours: hours,
-        latitude: latitude ? parseFloat(latitude) : undefined,
-        longitude: longitude ? parseFloat(longitude) : undefined,
+        latitude: lat && !isNaN(lat) ? lat : undefined,
+        longitude: lng && !isNaN(lng) ? lng : undefined,
       } as Partial<import('@/lib/types').Shop>);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
