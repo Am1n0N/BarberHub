@@ -42,7 +42,7 @@ export default function QueueDisplay({
     <div className="space-y-3">
       {entries.map((entry, index) => (
         <QueueCard
-          key={entry._id}
+          key={entry.id}
           entry={entry}
           locale={locale}
           position={index + 1}

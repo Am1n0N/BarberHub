@@ -36,7 +36,7 @@ export default function PayoutsPage() {
         ownerShare: number;
         completedServices: number;
       }>).map((summary) => ({
-        _id: summary.barberId,
+        id: summary.barberId,
         shop: shop.id,
         barber: summary.barberId,
         barberName: summary.barberName,

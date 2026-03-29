@@ -33,7 +33,7 @@ export default function PayoutTable({ payouts, locale = 'fr', onMarkPaid }: Payo
         </thead>
         <tbody>
           {payouts.map((payout) => (
-            <tr key={payout._id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+            <tr key={payout.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
               <td className="py-3 px-4 font-medium text-gray-900">{payout.barberName}</td>
               <td className="py-3 px-4 text-gray-600">{payout.servicesCount}</td>
               <td className="py-3 px-4 font-semibold text-gray-900">{formatPrice(payout.totalRevenue)}</td>
@@ -48,7 +48,7 @@ export default function PayoutTable({ payouts, locale = 'fr', onMarkPaid }: Payo
               {onMarkPaid && (
                 <td className="py-3 px-4">
                   {!payout.isPaid && (
-                    <Button size="sm" variant="outline" onClick={() => onMarkPaid(payout._id)}>
+                    <Button size="sm" variant="outline" onClick={() => onMarkPaid(payout.id)}>
                       {isRtl ? 'خلّصتو' : 'Marquer payé'}
                     </Button>
                   )}

@@ -53,8 +53,8 @@ export default function BookingForm({
     });
   };
 
-  const selectedServiceObj = services.find((s) => s._id === selectedService);
-  const selectedBarberObj = barbers.find((b) => b._id === selectedBarber);
+  const selectedServiceObj = services.find((s) => s.id === selectedService);
+  const selectedBarberObj = barbers.find((b) => b.id === selectedBarber);
 
   return (
     <div className="max-w-lg mx-auto">
@@ -130,7 +130,7 @@ export default function BookingForm({
             <div className="flex justify-between">
               <span className="text-gray-500">{isRtl ? 'الخدمة' : 'Service'}</span>
               <span className="font-medium">
-                {selectedServiceObj ? (isRtl ? selectedServiceObj.name : selectedServiceObj.nameFr) : ''}
+                {selectedServiceObj ? (isRtl ? selectedServiceObj.nameDerja : selectedServiceObj.nameFr) : ''}
               </span>
             </div>
             <div className="flex justify-between">

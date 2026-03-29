@@ -8,14 +8,14 @@ const router = Router();
 
 router.post(
   '/',
-  authenticate,
-  authorize('CLIENT', 'ADMIN'),
   validate([
-    body('shopId').notEmpty().withMessage('Shop ID is required'),
-    body('barberId').notEmpty().withMessage('Barber ID is required'),
-    body('serviceId').notEmpty().withMessage('Service ID is required'),
+    body('shop').notEmpty().withMessage('Shop ID is required'),
+    body('barber').notEmpty().withMessage('Barber ID is required'),
+    body('service').notEmpty().withMessage('Service ID is required'),
     body('date').notEmpty().isISO8601().withMessage('Valid date is required'),
     body('timeSlot').notEmpty().withMessage('Time slot is required'),
+    body('clientName').notEmpty().withMessage('Client name is required'),
+    body('clientPhone').notEmpty().withMessage('Client phone is required'),
   ]),
   (req, res, next) => bookingController.createBooking(req, res, next)
 );

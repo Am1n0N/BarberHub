@@ -90,7 +90,7 @@ export default function BookingsPage() {
           </div>
         )}
         {filteredBookings.map((booking) => (
-          <Card key={booking._id}>
+          <Card key={booking.id}>
             <div className="flex items-start justify-between">
               <div>
                 <p className="font-semibold text-gray-900 text-lg">{booking.clientName}</p>
@@ -113,16 +113,16 @@ export default function BookingsPage() {
             <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
               {booking.status === 'PENDING' && (
                 <>
-                  <Button size="sm" variant="primary" onClick={() => handleUpdateStatus(booking._id, 'CONFIRMED')}>
+                  <Button size="sm" variant="primary" onClick={() => handleUpdateStatus(booking.id, 'CONFIRMED')}>
                     {isRtl ? 'أكّد' : 'Confirmer'}
                   </Button>
-                  <Button size="sm" variant="danger" onClick={() => handleUpdateStatus(booking._id, 'CANCELLED')}>
+                  <Button size="sm" variant="danger" onClick={() => handleUpdateStatus(booking.id, 'CANCELLED')}>
                     {isRtl ? 'ألغي' : 'Annuler'}
                   </Button>
                 </>
               )}
               {booking.status === 'CONFIRMED' && (
-                <Button size="sm" variant="primary" onClick={() => handleUpdateStatus(booking._id, 'CHECKED_IN')}>
+                <Button size="sm" variant="primary" onClick={() => handleUpdateStatus(booking.id, 'CHECKED_IN')}>
                   {isRtl ? 'أضف للصف' : 'Ajouter à la file'}
                 </Button>
               )}

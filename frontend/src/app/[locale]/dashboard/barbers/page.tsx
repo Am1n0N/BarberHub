@@ -67,7 +67,7 @@ export default function BarbersPage() {
         role: 'BARBER',
       });
       await api.createBarber(shop.id, {
-        userId: user._id,
+        userId: user.id,
         commissionRate: (parseInt(newCommission) || 50) / 100,
       });
       await fetchBarbers();
@@ -103,22 +103,25 @@ export default function BarbersPage() {
       )}
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {barbers.map((barber) => (
-          <Card key={barber._id}>
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">
-                    {barber.name.charAt(0)}
-                  </span>
+        {barbers.map((barber) => {
+          const barberName = barber.name || 'Unknown';
+          const barberPhone = barber.phone || '';
+          return (
+            <Card key={barber.id}>
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xl font-bold">
+                      {barberName.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{barberName}</p>
+                    <p className="text-sm text-gray-500">{barberPhone}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{barber.name}</p>
-                  <p className="text-sm text-gray-500">{barber.phone}</p>
-                </div>
-              </div>
               <button
-                onClick={() => toggleAvailability(barber._id)}
+                onClick={() => toggleAvailability(barber.id)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                   barber.isAvailable
                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
@@ -150,7 +153,8 @@ export default function BarbersPage() {
               </div>
             </div>
           </Card>
-        ))}
+          );
+        })}
       </div>
 
       {/* Add Barber Modal */}

@@ -29,8 +29,8 @@ export default function BookShopPage() {
         const shopData = await api.getShop(shopSlug);
         setShop(shopData);
         const [servicesData, barbersData] = await Promise.all([
-          api.getShopServices(shopData._id),
-          api.getShopBarbers(shopData._id),
+          api.getShopServices(shopData.id),
+          api.getShopBarbers(shopData.id),
         ]);
         setServices(servicesData);
         setBarbers(barbersData);
@@ -55,7 +55,7 @@ export default function BookShopPage() {
     setSubmitting(true);
     try {
       await api.createBooking({
-        shop: shop._id,
+        shop: shop.id,
         service: data.serviceId,
         barber: data.barberId,
         date: data.date,
