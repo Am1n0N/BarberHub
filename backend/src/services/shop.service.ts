@@ -164,7 +164,7 @@ export class ShopService {
 
     const existing = await prisma.user.findUnique({ where: { phone: data.phone } });
     if (existing) {
-      throw Object.assign(new Error('Phone number already registered'), { statusCode: 409 });
+      throw Object.assign(new Error('Cannot create barber: phone number already in use'), { statusCode: 409 });
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);

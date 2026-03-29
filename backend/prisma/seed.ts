@@ -170,11 +170,10 @@ async function main() {
   console.log('  Note: In production, owner creates barbers via POST /shops/:id/barbers');
   console.log('        which atomically creates the user, barber record, and sends notifications.');
 
-  // Suppress unused-variable warnings for seeded records not used in relations
-  void admin;
-  void barber3;
-  void service4;
-  void client4;
+  // All seeded records are used in relations or retained for referential integrity:
+  // admin, barber3 (unavailable), service4, client4 remain in DB but have no
+  // active queue/booking entries — this is intentional to test empty states.
+  void [admin, barber3, service4, client4];
 }
 
 main()

@@ -12,6 +12,26 @@ import RevenueChart from '@/components/dashboard/RevenueChart';
 import Loading from '@/components/ui/Loading';
 import { formatPrice } from '@/lib/utils';
 
+interface BarberPayoutRecord {
+  id: string;
+  barberId: string;
+  date: string;
+  totalRevenue: number;
+  barberShare: number;
+  ownerShare: number;
+  isPaid: boolean;
+  paidVia?: string;
+}
+
+interface ShopDailySummaryRecord {
+  barberId: string;
+  barberName: string;
+  totalRevenue: number;
+  barberShare: number;
+  ownerShare: number;
+  completedServices: number;
+}
+
 export default function PayoutsPage() {
   const params = useParams();
   const locale = params.locale as string;
@@ -34,16 +54,7 @@ export default function PayoutsPage() {
       if (isBarber && user?.barber) {
         // Barber: fetch own payout history from the barber payouts endpoint
         const data = await api.getBarberPayouts(user.barber.id);
-        const mapped: Payout[] = (data as unknown as Array<{
-          id: string;
-          barberId: string;
-          date: string;
-          totalRevenue: number;
-          barberShare: number;
-          ownerShare: number;
-          isPaid: boolean;
-          paidVia?: string;
-        }>).map((p) => ({
+        const mapped: Payout[] = (data as unknown as BarberPayoutRecord[]).map((p) => ({
           id: p.id,
           shop: shop.id,
           barber: p.barberId,
@@ -60,14 +71,7 @@ export default function PayoutsPage() {
       } else {
         // Owner/Admin: fetch shop daily summary
         const data = await api.getDailyPayouts(shop.id, selectedDate);
-        const mappedPayouts: Payout[] = (data as unknown as Array<{
-          barberId: string;
-          barberName: string;
-          totalRevenue: number;
-          barberShare: number;
-          ownerShare: number;
-          completedServices: number;
-        }>).map((summary) => ({
+        const mappedPayouts: Payout[] = (data as unknown as ShopDailySummaryRecord[]).map((summary) => ({
           id: summary.barberId,
           shop: shop.id,
           barber: summary.barberId,

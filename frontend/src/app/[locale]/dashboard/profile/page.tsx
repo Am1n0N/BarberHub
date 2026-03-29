@@ -32,9 +32,9 @@ export default function BarberProfilePage() {
     try {
       setLoading(true);
       const barber = await api.getMyBarberProfile();
-      setIsAvailable((barber as unknown as { isAvailable: boolean }).isAvailable);
+      setIsAvailable(barber.isAvailable);
     } catch {
-      // Silently handle — use cached value
+      // Silently handle — use cached value from auth
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export default function BarberProfilePage() {
     setToggling(true);
     try {
       const updated = await api.toggleMyAvailability();
-      setIsAvailable((updated as unknown as { isAvailable: boolean }).isAvailable);
+      setIsAvailable(updated.isAvailable);
     } catch {
       // Silently handle
     } finally {
