@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --font-sans: system-ui, -apple-system, "Segoe UI", "Noto Sans Arabic", sans-serif;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+/* RTL support utilities */
+[dir="rtl"] .rtl\:space-x-reverse > :not(:last-child) {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+/* Smooth transitions for queue animations */
+.queue-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.queue-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* TV display styles */
+.tv-display {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* Hide scrollbar for TV display */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

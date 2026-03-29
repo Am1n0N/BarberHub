@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: barberhub-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: barberhub
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: barberhub-api
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/barberhub?schema=public
+      JWT_SECRET: change-this-in-production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: barberhub-web
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:3001
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
