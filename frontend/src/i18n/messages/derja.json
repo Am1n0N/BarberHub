@@ -1,0 +1,106 @@
+{
+  "common": {
+    "appName": "BarberHub",
+    "loading": "يستنى...",
+    "error": "صار مشكل",
+    "save": "سجّل",
+    "cancel": "ألغي",
+    "confirm": "أكّد",
+    "back": "ارجع",
+    "next": "أكمل",
+    "close": "سكّر",
+    "search": "قلّب",
+    "noResults": "ما لقينا حتى حاجة"
+  },
+  "auth": {
+    "login": "ادخل",
+    "register": "سجّل روحك",
+    "phone": "نمرة التليفون",
+    "name": "اسمك",
+    "password": "كلمة السر",
+    "loginButton": "ادخل لحسابك",
+    "registerButton": "افتح حساب جديد"
+  },
+  "queue": {
+    "title": "النوبة",
+    "yourTurn": "نوبتك جات!",
+    "position": "مرتبتك في الصف",
+    "waitTime": "وقت الإنتظار",
+    "minutes": "دقيقة",
+    "checkIn": "أنا وصلت",
+    "joinQueue": "ادخل للصف",
+    "currentlyServing": "تو يتخدم",
+    "nextUp": "الجايين",
+    "noOneInQueue": "ما فمّا حد في الصف",
+    "walkIn": "دخلة بلا رندي-فو",
+    "clientName": "اسم الكليون"
+  },
+  "booking": {
+    "title": "رندي-فو",
+    "bookNow": "احجز تو",
+    "selectService": "اختار الخدمة",
+    "selectBarber": "اختار الحجّام",
+    "selectTime": "اختار الوقت",
+    "selectDate": "اختار النهار",
+    "confirmBooking": "أكّد الرندي-فو",
+    "deposit": "عربون",
+    "depositRequired": "لازم عربون",
+    "bookingConfirmed": "الرندي-فو تأكّد!",
+    "yourBookings": "الرندي-فو متاعك"
+  },
+  "services": {
+    "simpleHaircut": "حلاقة بسيطة",
+    "beardTrim": "لحية",
+    "fullPackage": "باكاج كامل",
+    "kidsHaircut": "حلاقة صغار",
+    "price": "السوم",
+    "duration": "المدّة"
+  },
+  "dashboard": {
+    "title": "لوحة التحكّم",
+    "todayRevenue": "دخل اليوم",
+    "todayClients": "كليونات اليوم",
+    "activeQueue": "الصف الحالي",
+    "manageBarbers": "تصرّف في الحجّاما",
+    "manageServices": "تصرّف في الخدمات",
+    "viewPayouts": "شوف الحسابات",
+    "settings": "إعدادات"
+  },
+  "payout": {
+    "title": "الحسابات",
+    "dailySummary": "حساب اليوم",
+    "totalRevenue": "الدخل الكل",
+    "barberShare": "حصة الحجّام",
+    "ownerShare": "حصة صاحب الحانوت",
+    "markPaid": "خلّصتو",
+    "unpaid": "مازال ما تخلّص",
+    "paid": "تخلّص",
+    "payViaD17": "خلّص بـ D17"
+  },
+  "shop": {
+    "name": "اسم الحانوت",
+    "address": "العنوان",
+    "city": "المدينة",
+    "phone": "التليفون",
+    "openNow": "حالّ تو",
+    "closed": "مسكّر"
+  },
+  "tv": {
+    "welcomeTo": "مرحبا بيك في",
+    "nowServing": "تو يتخدم",
+    "waitingList": "لیست الإنتظار",
+    "scanToBook": "سكاني باش تحجز"
+  },
+  "landing": {
+    "heroTitle": "الحانوت متاعك، ديجيتال",
+    "heroSubtitle": "نظّم الصف، احجز الرندي-فو، و حاسب الحجّاما - الكل في بلاصة وحدة",
+    "ctaOwner": "سجّل حانوتك",
+    "ctaClient": "احجز رندي-فو",
+    "feature1Title": "وقّف مشاكل النوبة",
+    "feature1Desc": "صف ذكي يبيّن على التلفزة، الكل يعرف وين يستنى",
+    "feature2Title": "زيد دخلك بـ 15%",
+    "feature2Desc": "قلّل النو-شو بالعربون و التذكير أوتوماتيك",
+    "feature3Title": "حساب أوتوماتيك",
+    "feature3Desc": "الحجّام يعرف حقّو كل يوم، بلا مشاكل"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "common": {
+    "appName": "BarberHub",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "noResults": "Aucun résultat"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "phone": "Numéro de téléphone",
+    "name": "Votre nom",
+    "password": "Mot de passe",
+    "loginButton": "Se connecter",
+    "registerButton": "Créer un compte"
+  },
+  "queue": {
+    "title": "File d'attente",
+    "yourTurn": "C'est votre tour!",
+    "position": "Votre position",
+    "waitTime": "Temps d'attente",
+    "minutes": "minutes",
+    "checkIn": "Je suis arrivé",
+    "joinQueue": "Rejoindre la file",
+    "currentlyServing": "En cours",
+    "nextUp": "Suivants",
+    "noOneInQueue": "Personne dans la file",
+    "walkIn": "Sans rendez-vous",
+    "clientName": "Nom du client"
+  },
+  "booking": {
+    "title": "Rendez-vous",
+    "bookNow": "Réserver maintenant",
+    "selectService": "Choisir le service",
+    "selectBarber": "Choisir le barbier",
+    "selectTime": "Choisir l'heure",
+    "selectDate": "Choisir la date",
+    "confirmBooking": "Confirmer le rendez-vous",
+    "deposit": "Acompte",
+    "depositRequired": "Acompte requis",
+    "bookingConfirmed": "Rendez-vous confirmé!",
+    "yourBookings": "Vos rendez-vous"
+  },
+  "services": {
+    "simpleHaircut": "Coupe simple",
+    "beardTrim": "Taille de barbe",
+    "fullPackage": "Forfait complet",
+    "kidsHaircut": "Coupe enfant",
+    "price": "Prix",
+    "duration": "Durée"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "todayRevenue": "Revenus du jour",
+    "todayClients": "Clients du jour",
+    "activeQueue": "File active",
+    "manageBarbers": "Gérer les barbiers",
+    "manageServices": "Gérer les services",
+    "viewPayouts": "Voir les paiements",
+    "settings": "Paramètres"
+  },
+  "payout": {
+    "title": "Paiements",
+    "dailySummary": "Résumé du jour",
+    "totalRevenue": "Revenu total",
+    "barberShare": "Part du barbier",
+    "ownerShare": "Part du propriétaire",
+    "markPaid": "Marquer payé",
+    "unpaid": "Non payé",
+    "paid": "Payé",
+    "payViaD17": "Payer via D17"
+  },
+  "shop": {
+    "name": "Nom du salon",
+    "address": "Adresse",
+    "city": "Ville",
+    "phone": "Téléphone",
+    "openNow": "Ouvert",
+    "closed": "Fermé"
+  },
+  "tv": {
+    "welcomeTo": "Bienvenue chez",
+    "nowServing": "En cours",
+    "waitingList": "Liste d'attente",
+    "scanToBook": "Scannez pour réserver"
+  },
+  "landing": {
+    "heroTitle": "Votre salon, digitalisé",
+    "heroSubtitle": "Gérez la file d'attente, les rendez-vous et les paiements — tout en un seul endroit",
+    "ctaOwner": "Inscrire mon salon",
+    "ctaClient": "Prendre rendez-vous",
+    "feature1Title": "Fini les disputes de rang",
+    "feature1Desc": "File d'attente intelligente affichée sur TV, chacun connaît sa place",
+    "feature2Title": "Augmentez vos revenus de 15%",
+    "feature2Desc": "Réduisez les no-shows avec les acomptes et rappels automatiques",
+    "feature3Title": "Calcul automatique",
+    "feature3Desc": "Chaque barbier connaît sa part, chaque jour, sans conflits"
+  }
+}
