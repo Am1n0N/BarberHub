@@ -6,6 +6,8 @@ export interface Shop {
   city: string;
   phone: string;
   owner: string;
+  latitude?: number | null;
+  longitude?: number | null;
   openingHours: {
     day: number;
     open: string;

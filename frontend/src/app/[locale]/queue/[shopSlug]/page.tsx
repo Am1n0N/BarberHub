@@ -47,9 +47,8 @@ export default function QueueShopPage() {
     setJoining(true);
     try {
       const entry = await api.addToQueue({
-        shop: shop._id,
+        shopId: shop._id,
         clientName: clientName.trim(),
-        isWalkIn: true,
       });
       setJoined(true);
       setMyPosition(entry.position);

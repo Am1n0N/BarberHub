@@ -59,8 +59,8 @@ export default function SettingsPage() {
       setAddress(data.address || '');
       setCity(data.city || '');
       setPhone(data.phone || '');
-      if ((data as Record<string, unknown>).latitude) setLatitude(String((data as Record<string, unknown>).latitude));
-      if ((data as Record<string, unknown>).longitude) setLongitude(String((data as Record<string, unknown>).longitude));
+      if (data.latitude) setLatitude(String(data.latitude));
+      if (data.longitude) setLongitude(String(data.longitude));
       if (data.openingHours && Array.isArray(data.openingHours)) {
         setHours(data.openingHours);
       }
@@ -96,9 +96,9 @@ export default function SettingsPage() {
         city,
         phone,
         openingHours: hours,
-        ...(latitude ? { latitude: parseFloat(latitude) } : {}),
-        ...(longitude ? { longitude: parseFloat(longitude) } : {}),
-      } as Record<string, unknown>);
+        latitude: latitude ? parseFloat(latitude) : undefined,
+        longitude: longitude ? parseFloat(longitude) : undefined,
+      } as Partial<import('@/lib/types').Shop>);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch {
