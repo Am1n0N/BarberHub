@@ -26,6 +26,26 @@ export function authenticate(
   }
 }
 
+export function authenticateOptional(
+  req: AuthRequest,
+  _res: Response,
+  next: NextFunction
+): void {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, config.jwtSecret) as AuthenticatedUser;
+      req.user = decoded;
+    } catch {
+      // Token invalid — treat as unauthenticated guest
+    }
+  }
+
+  next();
+}
+
 export function authorize(...roles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {

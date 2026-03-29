@@ -211,7 +211,7 @@ export default function LandingHero({ locale }: LandingHeroProps) {
                   🗺️ {t('landing.clientCtaMap')}
                 </Link>
                 <Link
-                  href={`/${locale}/map`}
+                  href={`/${locale}/my-bookings`}
                   className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20 text-lg"
                 >
                   📅 {t('landing.clientCtaBook')}

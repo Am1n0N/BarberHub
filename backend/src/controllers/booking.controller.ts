@@ -10,22 +10,36 @@ export class BookingController {
     try {
       const { shop, barber, service, date, timeSlot, clientName, clientPhone } = req.body;
       
-      // Find or create client
-      let client = await prisma.user.findUnique({ where: { phone: clientPhone } });
-      if (!client) {
-        client = await prisma.user.create({
-          data: {
-            phone: clientPhone,
-            name: clientName,
-            role: 'CLIENT',
-            password: clientPhone, // Temporary password for anonymous clients
-          },
-        });
+      let clientId: string;
+
+      if (req.user) {
+        // Authenticated user — use their ID directly
+        clientId = req.user.id;
+      } else {
+        // Anonymous booking — require name and phone
+        if (!clientName || !clientPhone) {
+          res.status(400).json({ error: 'Client name and phone are required for anonymous bookings' });
+          return;
+        }
+        let client = await prisma.user.findUnique({ where: { phone: clientPhone } });
+        if (!client) {
+          const bcrypt = await import('bcryptjs');
+          const hashedPassword = await bcrypt.hash(clientPhone, 10);
+          client = await prisma.user.create({
+            data: {
+              phone: clientPhone,
+              name: clientName,
+              role: 'CLIENT',
+              password: hashedPassword,
+            },
+          });
+        }
+        clientId = client.id;
       }
-      
+
       const booking = await bookingService.createBooking({
         shopId: shop,
-        clientId: client.id,
+        clientId,
         barberId: barber,
         serviceId: service,
         date,
