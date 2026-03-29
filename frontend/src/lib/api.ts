@@ -31,6 +31,7 @@ export const api = {
     }),
 
   // Shops
+  listShops: () => fetchApi<import('./types').ShopMapItem[]>('/shops'),
   getShop: (slug: string) => fetchApi<import('./types').Shop>(`/shops/${slug}`),
   getShopServices: (shopId: string) => fetchApi<import('./types').Service[]>(`/shops/${shopId}/services`),
   getShopBarbers: (shopId: string) => fetchApi<import('./types').Barber[]>(`/shops/${shopId}/barbers`),

@@ -4,6 +4,25 @@ import { generateSlug } from '../utils/helpers';
 const prisma = new PrismaClient();
 
 export class ShopService {
+  async listShops() {
+    const shops = await prisma.shop.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        address: true,
+        city: true,
+        phone: true,
+        latitude: true,
+        longitude: true,
+        openingHours: true,
+        isActive: true,
+      },
+    });
+    return shops;
+  }
+
   async createShop(data: {
     name: string;
     address: string;
@@ -11,6 +30,8 @@ export class ShopService {
     phone: string;
     ownerId: string;
     openingHours?: Record<string, unknown>;
+    latitude?: number;
+    longitude?: number;
   }) {
     const existing = await prisma.shop.findUnique({
       where: { ownerId: data.ownerId },
@@ -38,6 +59,8 @@ export class ShopService {
         phone: data.phone,
         ownerId: data.ownerId,
         openingHours: data.openingHours as Prisma.InputJsonValue ?? undefined,
+        latitude: data.latitude,
+        longitude: data.longitude,
       },
       include: { owner: { select: { id: true, name: true, phone: true } } },
     });
@@ -75,6 +98,8 @@ export class ShopService {
       openingHours?: Record<string, unknown>;
       tvDisplayUrl?: string;
       isActive?: boolean;
+      latitude?: number;
+      longitude?: number;
     }
   ) {
     const shop = await prisma.shop.findUnique({ where: { id } });

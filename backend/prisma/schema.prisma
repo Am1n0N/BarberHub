@@ -42,6 +42,8 @@ model Shop {
   services     Service[]
   bookings     Booking[]
   queueEntries QueueEntry[]
+  latitude     Float?
+  longitude    Float?
   openingHours Json?
   tvDisplayUrl String?
   isActive     Boolean      @default(true)

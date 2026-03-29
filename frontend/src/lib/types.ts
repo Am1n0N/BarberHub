@@ -17,6 +17,18 @@ export interface Shop {
   updatedAt: string;
 }
 
+export interface ShopMapItem {
+  id: string;
+  name: string;
+  slug: string;
+  address: string;
+  city: string;
+  phone: string;
+  latitude: number | null;
+  longitude: number | null;
+  isActive: boolean;
+}
+
 export interface Barber {
   _id: string;
   name: string;
