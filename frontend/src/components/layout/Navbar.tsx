@@ -22,6 +22,18 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             <Link
+              href={`/${locale}/map`}
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-100 hidden sm:block"
+            >
+              {rtl ? '🗺️ الخريطة' : '🗺️ Carte'}
+            </Link>
+            <Link
+              href={`/${locale}/join`}
+              className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg hidden sm:block"
+            >
+              {rtl ? 'انضم معنا' : 'Rejoindre'}
+            </Link>
+            <Link
               href={locale === 'derja' ? '/fr' : '/derja'}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-100"
             >

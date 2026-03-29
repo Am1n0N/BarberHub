@@ -30,6 +30,8 @@ export default function SettingsPage() {
   const [address, setAddress] = useState('نهج الحبيب بورقيبة، تونس');
   const [city, setCity] = useState('تونس');
   const [phone, setPhone] = useState('71123456');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
   const [saved, setSaved] = useState(false);
 
   const [hours, setHours] = useState<OpeningHour[]>([
@@ -100,6 +102,37 @@ export default function SettingsPage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
+          </div>
+          <div className="border-t border-gray-100 pt-4">
+            <p className="text-sm font-medium text-gray-700 mb-2">
+              {isRtl ? '📍 موقع الحانوت في الخريطة' : '📍 Position sur la carte'}
+            </p>
+            <p className="text-xs text-gray-400 mb-3">
+              {isRtl
+                ? 'ادخل الإحداثيات باش يظهر حانوتك في خريطة الكليونات'
+                : 'Renseignez les coordonnées pour apparaître sur la carte clients'}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label={isRtl ? 'خط العرض (Latitude)' : 'Latitude'}
+                type="number"
+                value={latitude}
+                onChange={(e) => setLatitude(e.target.value)}
+                placeholder="36.8065"
+              />
+              <Input
+                label={isRtl ? 'خط الطول (Longitude)' : 'Longitude'}
+                type="number"
+                value={longitude}
+                onChange={(e) => setLongitude(e.target.value)}
+                placeholder="10.1815"
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-2">
+              {isRtl
+                ? '💡 ابحث عن اسم الحانوت في Google Maps وخذ الإحداثيات من الرابط'
+                : '💡 Recherchez votre salon sur Google Maps et copiez les coordonnées depuis l\'URL'}
+            </p>
           </div>
         </div>
       </Card>

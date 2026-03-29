@@ -3,8 +3,14 @@ import { body } from 'express-validator';
 import { shopController } from '../controllers/shop.controller';
 import { authenticate, authorize } from '../middleware/auth';
 import { validate } from '../middleware/validate';
+import { AuthRequest } from '../types';
 
 const router = Router();
+
+router.get(
+  '/',
+  (req, res, next) => shopController.listShops(req as AuthRequest, res, next)
+);
 
 router.post(
   '/',

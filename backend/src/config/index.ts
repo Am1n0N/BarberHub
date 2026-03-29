@@ -15,4 +15,14 @@ export const config = {
   flouciAppToken: process.env.FLOUCI_APP_TOKEN || '',
   flouciAppSecret: process.env.FLOUCI_APP_SECRET || '',
   konnectApiKey: process.env.KONNECT_API_KEY || '',
+  smtp: {
+    host: process.env.SMTP_HOST || '',
+    port: parseInt(process.env.SMTP_PORT || '587', 10),
+    secure: process.env.SMTP_SECURE === 'true',
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.SMTP_FROM || 'BarberHub <noreply@barberhub.tn>',
+  },
+  whatsappNotify: process.env.WHATSAPP_NOTIFY !== 'false', // enabled by default
+  appUrl: process.env.APP_URL || 'http://localhost:3000',
 };

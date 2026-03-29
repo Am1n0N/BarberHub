@@ -3,9 +3,18 @@ import { AuthRequest } from '../types';
 import { shopService } from '../services/shop.service';
 
 export class ShopController {
+  async listShops(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const shops = await shopService.listShops();
+      res.json(shops);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async createShop(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { name, address, city, phone, openingHours } = req.body;
+      const { name, address, city, phone, openingHours, latitude, longitude } = req.body;
       const shop = await shopService.createShop({
         name,
         address,
@@ -13,6 +22,8 @@ export class ShopController {
         phone,
         ownerId: req.user!.id,
         openingHours,
+        latitude: latitude !== undefined ? Number(latitude) : undefined,
+        longitude: longitude !== undefined ? Number(longitude) : undefined,
       });
       res.status(201).json(shop);
     } catch (err) {

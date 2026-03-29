@@ -1,0 +1,3 @@
+-- AddColumn latitude and longitude to Shop
+ALTER TABLE "Shop" ADD COLUMN "latitude" DOUBLE PRECISION;
+ALTER TABLE "Shop" ADD COLUMN "longitude" DOUBLE PRECISION;

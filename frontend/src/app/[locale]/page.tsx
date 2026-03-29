@@ -32,7 +32,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                 {t('landing.ctaOwner')}
               </Link>
               <Link
-                href={`/${locale}/book/demo-shop`}
+                href={`/${locale}/map`}
                 className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20 text-lg"
               >
                 {t('landing.ctaClient')}
@@ -129,6 +129,58 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Find a Shop Map CTA */}
+      <section className="py-20 bg-blue-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
+            <span className="text-xl">🗺️</span>
+            <span className="text-white/90 text-sm font-medium">
+              {isRtl ? 'خريطة الحوانيت' : 'Carte des salons'}
+            </span>
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            {isRtl ? 'لقى الحانوت القريب منّك' : 'Trouvez le salon le plus proche'}
+          </h2>
+          <p className="text-blue-100 max-w-xl mx-auto mb-8 text-lg">
+            {isRtl
+              ? 'شوف كل الحوانيت في خريطة، وقّف فوق علامة باش تشوف التفاصيل، كليك لتحجز مباشرة'
+              : 'Visualisez tous les salons sur une carte, survolez pour les détails, cliquez pour réserver'}
+          </p>
+          <Link
+            href={`/${locale}/map`}
+            className="inline-block px-10 py-4 bg-white text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
+          >
+            {isRtl ? '🗺️ شوف الخريطة' : '🗺️ Voir la carte'}
+          </Link>
+        </div>
+      </section>
+
+      {/* Join BarberHub CTA */}
+      <section className="py-20 bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
+            <span className="text-xl">🚀</span>
+            <span className="text-white/90 text-sm font-medium">
+              {isRtl ? 'انضم معنا' : 'Rejoignez-nous'}
+            </span>
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            {isRtl ? 'عندك حانوت؟ انضم لـ BarberHub' : 'Vous avez un salon\u00a0? Rejoignez BarberHub'}
+          </h2>
+          <p className="text-gray-300 max-w-xl mx-auto mb-8 text-lg">
+            {isRtl
+              ? 'سجّل حانوتك وابدأ تستقبل حجوزات وتنظّم الصف من اليوم. مجاني وسريع!'
+              : 'Inscrivez votre salon et commencez à recevoir des réservations dès aujourd\'hui. Gratuit et rapide\u00a0!'}
+          </p>
+          <Link
+            href={`/${locale}/join`}
+            className="inline-block px-10 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
+          >
+            {isRtl ? '📨 سجّل حانوتك تو' : '📨 Inscrire mon salon'}
+          </Link>
         </div>
       </section>
     </div>
