@@ -19,7 +19,17 @@
     "name": "Votre nom",
     "password": "Mot de passe",
     "loginButton": "Se connecter",
-    "registerButton": "Créer un compte"
+    "registerButton": "Créer un compte",
+    "logout": "Se déconnecter",
+    "noAccount": "Pas encore de compte?",
+    "haveAccount": "Déjà un compte?",
+    "roleLabel": "Je suis",
+    "roleClient": "Client",
+    "roleOwner": "Propriétaire de salon",
+    "roleBarber": "Barbier",
+    "roleAdmin": "Administrateur",
+    "wrongCredentials": "Numéro ou mot de passe incorrect",
+    "phoneExists": "Ce numéro est déjà utilisé"
   },
   "queue": {
     "title": "File d'attente",

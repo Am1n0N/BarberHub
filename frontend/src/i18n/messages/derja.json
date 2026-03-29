@@ -19,7 +19,17 @@
     "name": "اسمك",
     "password": "كلمة السر",
     "loginButton": "ادخل لحسابك",
-    "registerButton": "افتح حساب جديد"
+    "registerButton": "افتح حساب جديد",
+    "logout": "اخرج",
+    "noAccount": "ما عندكش حساب؟",
+    "haveAccount": "عندك حساب؟",
+    "roleLabel": "أنا",
+    "roleClient": "كليون",
+    "roleOwner": "صاحب حانوت",
+    "roleBarber": "حجّام",
+    "roleAdmin": "مدير",
+    "wrongCredentials": "النمرة أو كلمة السر غالطة",
+    "phoneExists": "هاذي النمرة مستعملة"
   },
   "queue": {
     "title": "النوبة",
