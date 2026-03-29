@@ -25,7 +25,9 @@ export function formatDate(date: string | Date, locale: string): string {
 export function formatTime(time: string): string {
   const [hours, minutes] = time.split(':');
   const h = parseInt(hours, 10);
-  return `${h > 12 ? h - 12 : h}:${minutes} ${h >= 12 ? 'PM' : 'AM'}`;
+  const displayH = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  const period = h >= 12 && h < 24 ? 'PM' : 'AM';
+  return `${displayH}:${minutes} ${period}`;
 }
 
 export function generateTimeSlots(start: string, end: string, intervalMinutes: number): string[] {

@@ -1,10 +1,9 @@
 import Sidebar from '@/components/layout/Sidebar';
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }) {
 
   return (
