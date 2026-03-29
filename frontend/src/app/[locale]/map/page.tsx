@@ -62,18 +62,7 @@ export default function MapPage() {
             </div>
           </div>
         )}
-        {!loading && !error && (
-          <>
-            {/* Leaflet CSS */}
-            {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-            <link
-              rel="stylesheet"
-              href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-              crossOrigin=""
-            />
-            <ShopMap shops={shops} locale={locale} />
-          </>
-        )}
+        {!loading && !error && <ShopMap shops={shops} locale={locale} />}
       </div>
 
       {/* No-coords notice */}

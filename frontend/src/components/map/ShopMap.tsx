@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import 'leaflet/dist/leaflet.css';
 import type { ShopMapItem } from '@/lib/types';
 
 interface ShopMapProps {
@@ -111,7 +112,7 @@ export default function ShopMap({ shops, locale }: ShopMapProps) {
   return (
     <div
       ref={mapRef}
-      style={{ width: '100%', height: '100%' }}
+      style={{ position: 'absolute', inset: 0 }}
       aria-label={isRtl ? 'خريطة الحوانيت' : 'Carte des salons'}
     />
   );
