@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(uuid())
+  phone        String       @unique
+  name         String
+  password     String
+  role         Role         @default(CLIENT)
+  language     String       @default("derja")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  shop         Shop?        @relation("ShopOwner")
+  barber       Barber?
+  bookings     Booking[]
+  queueEntries QueueEntry[]
+}
+
+enum Role {
+  CLIENT
+  BARBER
+  OWNER
+  ADMIN
+}
+
+model Shop {
+  id           String       @id @default(uuid())
+  name         String
+  slug         String       @unique
+  address      String
+  city         String
+  phone        String
+  ownerId      String       @unique
+  owner        User         @relation("ShopOwner", fields: [ownerId], references: [id])
+  barbers      Barber[]
+  services     Service[]
+  bookings     Booking[]
+  queueEntries QueueEntry[]
+  openingHours Json?
+  tvDisplayUrl String?
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Barber {
+  id             String       @id @default(uuid())
+  userId         String       @unique
+  user           User         @relation(fields: [userId], references: [id])
+  shopId         String
+  shop           Shop         @relation(fields: [shopId], references: [id])
+  commissionRate Float        @default(0.5)
+  isAvailable    Boolean      @default(true)
+  bookings       Booking[]
+  queueEntries   QueueEntry[]
+  payouts        Payout[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Service {
+  id           String       @id @default(uuid())
+  shopId       String
+  shop         Shop         @relation(fields: [shopId], references: [id])
+  nameDerja    String
+  nameFr       String
+  price        Float
+  durationMin  Int          @default(30)
+  isActive     Boolean      @default(true)
+  bookings     Booking[]
+  queueEntries QueueEntry[]
+}
+
+model Booking {
+  id            String        @id @default(uuid())
+  shopId        String
+  shop          Shop          @relation(fields: [shopId], references: [id])
+  clientId      String
+  client        User          @relation(fields: [clientId], references: [id])
+  barberId      String
+  barber        Barber        @relation(fields: [barberId], references: [id])
+  serviceId     String
+  service       Service       @relation(fields: [serviceId], references: [id])
+  date          DateTime
+  timeSlot      String
+  status        BookingStatus @default(PENDING)
+  depositAmount Float?
+  depositPaid   Boolean       @default(false)
+  paymentRef    String?
+  reminderSent  Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  DEPOSIT_PAID
+  CHECKED_IN
+  IN_PROGRESS
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+model QueueEntry {
+  id          String      @id @default(uuid())
+  shopId      String
+  shop        Shop        @relation(fields: [shopId], references: [id])
+  clientId    String?
+  client      User?       @relation(fields: [clientId], references: [id])
+  barberId    String?
+  barber      Barber?     @relation(fields: [barberId], references: [id])
+  serviceId   String?
+  service     Service?    @relation(fields: [serviceId], references: [id])
+  clientName  String
+  position    Int
+  type        QueueType   @default(WALK_IN)
+  status      QueueStatus @default(WAITING)
+  checkedInAt DateTime    @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+}
+
+enum QueueType {
+  WALK_IN
+  BOOKED
+}
+
+enum QueueStatus {
+  WAITING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Payout {
+  id           String   @id @default(uuid())
+  barberId     String
+  barber       Barber   @relation(fields: [barberId], references: [id])
+  date         DateTime
+  totalRevenue Float
+  barberShare  Float
+  ownerShare   Float
+  isPaid       Boolean  @default(false)
+  paidVia      String?
+  createdAt    DateTime @default(now())
+}
