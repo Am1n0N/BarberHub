@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { AuthRequest } from '../types';
 import { bookingService } from '../services/booking.service';
@@ -6,6 +6,30 @@ import { bookingService } from '../services/booking.service';
 const prisma = new PrismaClient();
 
 export class BookingController {
+  async getAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { shopId, barberId, serviceId, date } = req.query;
+
+      if (!shopId || !barberId || !serviceId || !date) {
+        throw Object.assign(
+          new Error('shopId, barberId, serviceId, and date are required'),
+          { statusCode: 400 }
+        );
+      }
+
+      const result = await bookingService.getAvailableSlots({
+        shopId: shopId as string,
+        barberId: barberId as string,
+        serviceId: serviceId as string,
+        date: date as string,
+      });
+
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async createBooking(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { shop, barber, service, date, timeSlot, clientName, clientPhone } = req.body;
