@@ -6,6 +6,8 @@ export interface Shop {
   city: string;
   phone: string;
   owner: string;
+  latitude?: number | null;
+  longitude?: number | null;
   openingHours: {
     day: number;
     open: string;
@@ -119,7 +121,15 @@ export interface User {
   name: string;
   phone: string;
   role: 'owner' | 'barber' | 'client' | 'OWNER' | 'BARBER' | 'CLIENT' | 'ADMIN';
-  shop?: string;
+  shop?: string | { id: string; name: string; slug: string };
+}
+
+export interface MeResponse {
+  id: string;
+  name: string;
+  phone: string;
+  role: string;
+  shop?: { id: string; name: string; slug: string } | null;
 }
 
 export type ShopRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';

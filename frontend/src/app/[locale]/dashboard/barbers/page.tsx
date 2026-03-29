@@ -1,62 +1,89 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { getTranslation } from '@/i18n/config';
 import { Barber } from '@/lib/types';
+import { api } from '@/lib/api';
+import { useShop } from '@/hooks/useShop';
+import { transformBarber } from '@/lib/transformers';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
+import Loading from '@/components/ui/Loading';
 import { formatPrice } from '@/lib/utils';
-
-const initialBarbers: Barber[] = [
-  { _id: 'b1', name: 'سامي', phone: '55111111', shop: 's1', commissionRate: 50, isAvailable: true, createdAt: '' },
-  { _id: 'b2', name: 'كريم', phone: '55222222', shop: 's1', commissionRate: 50, isAvailable: true, createdAt: '' },
-  { _id: 'b3', name: 'نبيل', phone: '55333333', shop: 's1', commissionRate: 45, isAvailable: false, createdAt: '' },
-];
-
-const todayEarnings: Record<string, number> = {
-  b1: 120,
-  b2: 95,
-  b3: 0,
-};
 
 export default function BarbersPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = getTranslation(locale);
   const isRtl = locale === 'derja';
+  const { shop, loading: shopLoading } = useShop();
 
-  const [barbers, setBarbers] = useState<Barber[]>(initialBarbers);
+  const [barbers, setBarbers] = useState<Barber[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [newCommission, setNewCommission] = useState('50');
 
-  const toggleAvailability = (id: string) => {
-    setBarbers((prev) =>
-      prev.map((b) => (b._id === id ? { ...b, isAvailable: !b.isAvailable } : b))
-    );
+  const fetchBarbers = useCallback(async () => {
+    if (!shop) return;
+    try {
+      setLoading(true);
+      const data = await api.getShopBarbers(shop.id);
+      setBarbers((data as unknown[]).map((b) => transformBarber(b)));
+    } catch {
+      // Silently handle
+    } finally {
+      setLoading(false);
+    }
+  }, [shop]);
+
+  useEffect(() => {
+    fetchBarbers();
+  }, [fetchBarbers]);
+
+  const toggleAvailability = async (id: string) => {
+    if (!shop) return;
+    try {
+      await api.toggleBarberAvailability(shop.id, id);
+      await fetchBarbers();
+    } catch {
+      // Silently handle
+    }
   };
 
-  const handleAdd = () => {
-    if (!newName.trim()) return;
-    const newBarber: Barber = {
-      _id: `b-${Date.now()}`,
-      name: newName,
-      phone: newPhone,
-      shop: 's1',
-      commissionRate: parseInt(newCommission) || 50,
-      isAvailable: true,
-      createdAt: new Date().toISOString(),
-    };
-    setBarbers((prev) => [...prev, newBarber]);
-    setNewName('');
-    setNewPhone('');
-    setNewCommission('50');
-    setShowAdd(false);
+  const handleAdd = async () => {
+    if (!newName.trim() || !newPhone.trim() || !newPassword.trim() || !shop) return;
+    try {
+      // First register the barber user, then add to shop
+      const { user } = await api.register({
+        phone: newPhone,
+        name: newName,
+        password: newPassword,
+        role: 'BARBER',
+      });
+      await api.createBarber(shop.id, {
+        userId: user._id,
+        commissionRate: (parseInt(newCommission) || 50) / 100,
+      });
+      await fetchBarbers();
+      setNewName('');
+      setNewPhone('');
+      setNewPassword('');
+      setNewCommission('50');
+      setShowAdd(false);
+    } catch {
+      // Silently handle
+    }
   };
+
+  if (shopLoading || loading) {
+    return <Loading />;
+  }
 
   return (
     <div>
@@ -68,6 +95,12 @@ export default function BarbersPage() {
           {isRtl ? '➕ أضف حجّام' : '➕ Ajouter un barbier'}
         </Button>
       </div>
+
+      {barbers.length === 0 && (
+        <div className="text-center py-12 text-gray-400">
+          {isRtl ? 'ما فمّاش حجّامين' : 'Aucun barbier'}
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {barbers.map((barber) => (
@@ -103,14 +136,16 @@ export default function BarbersPage() {
                 <p className="text-xs text-gray-500">
                   {isRtl ? 'نسبة العمولة' : 'Commission'}
                 </p>
-                <p className="font-bold text-gray-900">{barber.commissionRate}%</p>
+                <p className="font-bold text-gray-900">{Math.round(barber.commissionRate * 100)}%</p>
               </div>
               <div className="text-center">
                 <p className="text-xs text-gray-500">
-                  {isRtl ? 'دخل اليوم' : "Gains aujourd'hui"}
+                  {isRtl ? 'الحالة' : 'Statut'}
                 </p>
                 <p className="font-bold text-blue-600">
-                  {formatPrice(todayEarnings[barber._id] || 0)}
+                  {barber.isAvailable
+                    ? (isRtl ? 'نشط' : 'Actif')
+                    : (isRtl ? 'غير نشط' : 'Inactif')}
                 </p>
               </div>
             </div>
@@ -132,6 +167,13 @@ export default function BarbersPage() {
             value={newPhone}
             onChange={(e) => setNewPhone(e.target.value)}
             placeholder="55 XXX XXX"
+          />
+          <Input
+            label={isRtl ? 'كلمة السر' : 'Mot de passe'}
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder={isRtl ? 'كلمة سر الحجّام' : 'Mot de passe du barbier'}
           />
           <Input
             label={isRtl ? 'نسبة العمولة (%)' : 'Commission (%)'}

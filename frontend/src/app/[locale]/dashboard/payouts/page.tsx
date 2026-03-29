@@ -1,73 +1,80 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { getTranslation } from '@/i18n/config';
 import { Payout } from '@/lib/types';
+import { api } from '@/lib/api';
+import { useShop } from '@/hooks/useShop';
 import PayoutTable from '@/components/dashboard/PayoutTable';
 import RevenueChart from '@/components/dashboard/RevenueChart';
+import Loading from '@/components/ui/Loading';
 import { formatPrice } from '@/lib/utils';
-
-const mockPayouts: Payout[] = [
-  {
-    _id: 'p1',
-    shop: 's1',
-    barber: 'b1',
-    barberName: 'سامي',
-    date: new Date().toISOString().split('T')[0],
-    servicesCount: 8,
-    totalRevenue: 120,
-    barberShare: 60,
-    ownerShare: 60,
-    isPaid: false,
-  },
-  {
-    _id: 'p2',
-    shop: 's1',
-    barber: 'b2',
-    barberName: 'كريم',
-    date: new Date().toISOString().split('T')[0],
-    servicesCount: 6,
-    totalRevenue: 95,
-    barberShare: 47.5,
-    ownerShare: 47.5,
-    isPaid: false,
-  },
-  {
-    _id: 'p3',
-    shop: 's1',
-    barber: 'b3',
-    barberName: 'نبيل',
-    date: new Date().toISOString().split('T')[0],
-    servicesCount: 4,
-    totalRevenue: 60,
-    barberShare: 27,
-    ownerShare: 33,
-    isPaid: true,
-    paidAt: new Date().toISOString(),
-    paymentMethod: 'cash',
-  },
-];
 
 export default function PayoutsPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = getTranslation(locale);
+  const { shop, loading: shopLoading } = useShop();
 
-  const [payouts, setPayouts] = useState<Payout[]>(mockPayouts);
+  const [payouts, setPayouts] = useState<Payout[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const fetchPayouts = useCallback(async () => {
+    if (!shop) return;
+    try {
+      setLoading(true);
+      const data = await api.getDailyPayouts(shop.id, selectedDate);
+      // The backend returns an array of DailyPayoutSummary (per barber)
+      // Map to the Payout[] format used by the UI
+      const mappedPayouts: Payout[] = (data as unknown as Array<{
+        barberId: string;
+        barberName: string;
+        totalRevenue: number;
+        barberShare: number;
+        ownerShare: number;
+        completedServices: number;
+      }>).map((summary) => ({
+        _id: summary.barberId,
+        shop: shop.id,
+        barber: summary.barberId,
+        barberName: summary.barberName,
+        date: selectedDate,
+        servicesCount: summary.completedServices,
+        totalRevenue: summary.totalRevenue,
+        barberShare: summary.barberShare,
+        ownerShare: summary.ownerShare,
+        isPaid: false,
+      }));
+      setPayouts(mappedPayouts);
+    } catch {
+      // Silently handle
+    } finally {
+      setLoading(false);
+    }
+  }, [shop, selectedDate]);
+
+  useEffect(() => {
+    fetchPayouts();
+  }, [fetchPayouts]);
 
   const totalRevenue = payouts.reduce((sum, p) => sum + p.totalRevenue, 0);
   const totalBarberShare = payouts.reduce((sum, p) => sum + p.barberShare, 0);
   const totalOwnerShare = payouts.reduce((sum, p) => sum + p.ownerShare, 0);
 
-  const handleMarkPaid = (id: string) => {
-    setPayouts((prev) =>
-      prev.map((p) =>
-        p._id === id ? { ...p, isPaid: true, paidAt: new Date().toISOString() } : p
-      )
-    );
+  const handleMarkPaid = async (id: string) => {
+    try {
+      await api.markPaid(id);
+      await fetchPayouts();
+    } catch {
+      // Silently handle
+    }
   };
+
+  if (shopLoading || loading) {
+    return <Loading />;
+  }
 
   return (
     <div>

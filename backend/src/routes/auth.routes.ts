@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { authController } from '../controllers/auth.controller';
+import { authenticate } from '../middleware/auth';
 import { validate } from '../middleware/validate';
 
 const router = Router();
@@ -30,5 +31,7 @@ router.post(
   ]),
   (req, res, next) => authController.login(req, res, next)
 );
+
+router.get('/me', authenticate, (req, res, next) => authController.getMe(req, res, next));
 
 export default router;

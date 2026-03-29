@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getTranslation } from '@/i18n/config';
@@ -9,66 +9,48 @@ import QueueDisplay from '@/components/queue/QueueDisplay';
 import Loading from '@/components/ui/Loading';
 import Button from '@/components/ui/Button';
 import { QueueEntry } from '@/lib/types';
-
-// Mock data for demo
-const mockQueue: QueueEntry[] = [
-  {
-    _id: '1',
-    shop: 's1',
-    clientName: 'أحمد',
-    barberName: 'سامي',
-    serviceName: 'حلاقة بسيطة',
-    position: 1,
-    status: 'IN_PROGRESS',
-    estimatedWait: 0,
-    isWalkIn: false,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    _id: '2',
-    shop: 's1',
-    clientName: 'محمد',
-    barberName: 'كريم',
-    serviceName: 'لحية',
-    position: 2,
-    status: 'IN_PROGRESS',
-    estimatedWait: 0,
-    isWalkIn: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    _id: '3',
-    shop: 's1',
-    clientName: 'يوسف',
-    position: 3,
-    status: 'WAITING',
-    estimatedWait: 15,
-    isWalkIn: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    _id: '4',
-    shop: 's1',
-    clientName: 'علي',
-    serviceName: 'باكاج كامل',
-    position: 4,
-    status: 'WAITING',
-    estimatedWait: 30,
-    isWalkIn: false,
-    createdAt: new Date().toISOString(),
-  },
-];
+import { api } from '@/lib/api';
+import { useShop } from '@/hooks/useShop';
+import { transformQueueEntry } from '@/lib/transformers';
 
 export default function DashboardHomePage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = getTranslation(locale);
   const isRtl = locale === 'derja';
+  const { shop, loading: shopLoading } = useShop();
 
-  const [loading] = useState(false);
-  const [queue] = useState<QueueEntry[]>(mockQueue);
+  const [loading, setLoading] = useState(true);
+  const [queue, setQueue] = useState<QueueEntry[]>([]);
+  const [bookingsCount, setBookingsCount] = useState(0);
+
+  const fetchData = useCallback(async () => {
+    if (!shop) return;
+    try {
+      setLoading(true);
+      const [queueData, bookingsData] = await Promise.all([
+        api.getQueue(shop.id),
+        api.getShopBookings(shop.id),
+      ]);
+      setQueue((queueData as unknown[]).map((e) => transformQueueEntry(e, locale)));
+      setBookingsCount((bookingsData as unknown[]).length);
+    } catch {
+      // Silently handle - data will show as empty
+    } finally {
+      setLoading(false);
+    }
+  }, [shop, locale]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const activeCount = queue.filter((e) => e.status === 'WAITING' || e.status === 'IN_PROGRESS').length;
+  const isLoading = shopLoading || loading;
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div>
@@ -90,15 +72,13 @@ export default function DashboardHomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatsCard
           title={t('dashboard.todayRevenue')}
-          value="245 DT"
+          value="—"
           icon="💰"
-          trend="+12%"
         />
         <StatsCard
           title={t('dashboard.todayClients')}
-          value="18"
+          value={queue.filter((e) => e.status === 'COMPLETED').length + activeCount}
           icon="👥"
-          trend="+3"
         />
         <StatsCard
           title={t('dashboard.activeQueue')}
@@ -107,7 +87,7 @@ export default function DashboardHomePage() {
         />
         <StatsCard
           title={isRtl ? 'الرندي-فو اليوم' : "RDV aujourd'hui"}
-          value="7"
+          value={bookingsCount}
           icon="📅"
         />
       </div>
@@ -144,11 +124,7 @@ export default function DashboardHomePage() {
             </Button>
           </Link>
         </div>
-        {loading ? (
-          <Loading />
-        ) : (
-          <QueueDisplay entries={queue} locale={locale} compact />
-        )}
+        <QueueDisplay entries={queue} locale={locale} compact />
       </div>
     </div>
   );
