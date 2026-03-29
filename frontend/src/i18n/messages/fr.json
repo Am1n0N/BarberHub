@@ -97,7 +97,9 @@
     "manageBarbers": "Gérer les barbiers",
     "manageServices": "Gérer les services",
     "viewPayouts": "Voir les paiements",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "myBookings": "Mes rendez-vous",
+    "myPayouts": "Mes paiements"
   },
   "payout": {
     "title": "Paiements",
@@ -163,5 +165,16 @@
     "adminCtaPanel": "Accéder à l'admin",
     "adminCtaShops": "Gérer les salons",
     "adminCtaRequests": "Demandes en attente"
+  },
+  "barberProfile": {
+    "title": "Mon profil",
+    "subtitle": "Vos informations et paramètres",
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "setUnavailable": "Me mettre indisponible",
+    "setAvailable": "Me remettre disponible",
+    "commission": "Taux de commission",
+    "commissionDesc": "Votre part sur chaque service réalisé",
+    "updating": "Mise à jour..."
   }
 }

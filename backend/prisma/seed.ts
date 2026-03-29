@@ -25,18 +25,46 @@ async function main() {
 
   // Owner user
   const owner = await prisma.user.create({
-    data: { phone: '55100000', name: 'سامي المالك', password, role: 'OWNER', language: 'derja' },
+    data: {
+      phone: '55100000',
+      name: 'سامي المالك',
+      email: 'owner@barberhub.tn',
+      password,
+      role: 'OWNER',
+      language: 'derja',
+    },
   });
 
-  // Barber users
+  // Barber users — email stored so credentials can be resent later
   const barberUser1 = await prisma.user.create({
-    data: { phone: '55111111', name: 'سامي', password, role: 'BARBER', language: 'derja' },
+    data: {
+      phone: '55111111',
+      name: 'سامي',
+      email: 'sami@barberhub.tn',
+      password,
+      role: 'BARBER',
+      language: 'derja',
+    },
   });
   const barberUser2 = await prisma.user.create({
-    data: { phone: '55222222', name: 'كريم', password, role: 'BARBER', language: 'derja' },
+    data: {
+      phone: '55222222',
+      name: 'كريم',
+      email: 'karim@barberhub.tn',
+      password,
+      role: 'BARBER',
+      language: 'derja',
+    },
   });
   const barberUser3 = await prisma.user.create({
-    data: { phone: '55333333', name: 'نبيل', password, role: 'BARBER', language: 'derja' },
+    data: {
+      phone: '55333333',
+      name: 'نبيل',
+      // No email — tests the case where only WhatsApp is available
+      password,
+      role: 'BARBER',
+      language: 'derja',
+    },
   });
 
   // Client users
@@ -77,7 +105,7 @@ async function main() {
     },
   });
 
-  // Barbers
+  // Barbers — linked to shop after owner creates them
   const barber1 = await prisma.barber.create({
     data: { userId: barberUser1.id, shopId: shop.id, commissionRate: 0.5, isAvailable: true },
   });
@@ -131,9 +159,22 @@ async function main() {
   });
 
   console.log('✅ Seed complete!');
-  console.log(`  Admin: phone=99000000, password=password123`);
-  console.log(`  Owner: phone=55100000, password=password123`);
-  console.log(`  Shop: ${shop.name} (slug: ${shop.slug})`);
+  console.log('');
+  console.log('  👤 Admin      phone=99000000         password=password123');
+  console.log(`  🏪 Owner      phone=55100000         password=password123  email=owner@barberhub.tn`);
+  console.log(`  ✂️  Barber 1   phone=55111111 (سامي)  password=password123  email=sami@barberhub.tn`);
+  console.log(`  ✂️  Barber 2   phone=55222222 (كريم)  password=password123  email=karim@barberhub.tn`);
+  console.log(`  ✂️  Barber 3   phone=55333333 (نبيل)  password=password123  (no email)`);
+  console.log(`  🏪 Shop: ${shop.name} (slug: ${shop.slug})`);
+  console.log('');
+  console.log('  Note: In production, owner creates barbers via POST /shops/:id/barbers');
+  console.log('        which atomically creates the user, barber record, and sends notifications.');
+
+  // Suppress unused-variable warnings for seeded records not used in relations
+  void admin;
+  void barber3;
+  void service4;
+  void client4;
 }
 
 main()

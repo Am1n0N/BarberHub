@@ -88,12 +88,22 @@ export const api = {
     fetchApi(`/shops/${shopId}/services/${serviceId}`, { method: 'DELETE' }),
 
   // Barbers (shop-scoped)
-  createBarber: (shopId: string, data: { userId: string; commissionRate?: number }) =>
-    fetchApi<import('./types').Barber>(`/shops/${shopId}/barbers`, { method: 'POST', body: JSON.stringify(data) }),
+  createBarber: (shopId: string, data: { name: string; phone: string; password: string; email?: string; commissionRate?: number }) =>
+    fetchApi<{ barber: import('./types').Barber; notification: { emailSent: boolean; whatsappUrl: string | null } }>(`/shops/${shopId}/barbers`, { method: 'POST', body: JSON.stringify(data) }),
   updateBarber: (shopId: string, barberId: string, data: { commissionRate?: number }) =>
     fetchApi<import('./types').Barber>(`/shops/${shopId}/barbers/${barberId}`, { method: 'PATCH', body: JSON.stringify(data) }),
   toggleBarberAvailability: (shopId: string, barberId: string) =>
     fetchApi<import('./types').Barber>(`/shops/${shopId}/barbers/${barberId}/toggle-availability`, { method: 'PATCH' }),
+
+  // Barber self-service
+  getBarberMyBookings: () =>
+    fetchApi<import('./types').Booking[]>('/bookings/barber/my'),
+  toggleMyAvailability: () =>
+    fetchApi<import('./types').Barber>('/barbers/my/toggle-availability', { method: 'PATCH' }),
+  getMyBarberProfile: () =>
+    fetchApi<import('./types').Barber>('/barbers/my'),
+  getBarberPayouts: (barberId: string, date?: string) =>
+    fetchApi<import('./types').Payout[]>(`/payouts/barber/${barberId}${date ? `?date=${date}` : ''}`),
 
   // Admin
   adminListShops: (page = 1) =>

@@ -1,5 +1,7 @@
 import { PrismaClient, Prisma } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 import { generateSlug } from '../utils/helpers';
+import { notifyBarberCreated, NotificationResult } from './notification.service';
 
 const prisma = new PrismaClient();
 
@@ -139,7 +141,17 @@ export class ShopService {
     }));
   }
 
-  async addBarber(shopId: string, ownerId: string, userId: string, commissionRate?: number) {
+  async addBarber(
+    shopId: string,
+    ownerId: string,
+    data: {
+      name: string;
+      phone: string;
+      password: string;
+      email?: string | null;
+      commissionRate?: number;
+    }
+  ): Promise<{ barber: Record<string, unknown>; notification: NotificationResult }> {
     const shop = await prisma.shop.findUnique({ where: { id: shopId } });
 
     if (!shop) {
@@ -150,26 +162,48 @@ export class ShopService {
       throw Object.assign(new Error('Not authorized'), { statusCode: 403 });
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      throw Object.assign(new Error('User not found'), { statusCode: 404 });
+    const existing = await prisma.user.findUnique({ where: { phone: data.phone } });
+    if (existing) {
+      throw Object.assign(new Error('Phone number already registered'), { statusCode: 409 });
     }
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: { role: 'BARBER' },
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        phone: data.phone,
+        name: data.name,
+        email: data.email ?? null,
+        password: hashedPassword,
+        role: 'BARBER',
+      },
     });
 
     const barber = await prisma.barber.create({
       data: {
-        userId,
+        userId: user.id,
         shopId,
-        commissionRate: commissionRate ?? 0.5,
+        commissionRate: data.commissionRate ?? 0.5,
       },
       include: { user: { select: { id: true, name: true, phone: true } } },
     });
 
-    return barber;
+    const notification = await notifyBarberCreated({
+      barberName: data.name,
+      barberPhone: data.phone,
+      barberEmail: data.email,
+      shopName: shop.name,
+      password: data.password,
+    });
+
+    return {
+      barber: {
+        ...barber,
+        name: barber.user.name,
+        phone: barber.user.phone,
+      },
+      notification,
+    };
   }
 
   async addService(

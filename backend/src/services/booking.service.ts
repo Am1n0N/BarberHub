@@ -111,6 +111,25 @@ export class BookingService {
     return bookings;
   }
 
+  async getBookingsForBarber(barberId: string) {
+    const bookings = await prisma.booking.findMany({
+      where: { barberId },
+      include: {
+        shop: { select: { id: true, name: true, slug: true, address: true, city: true, phone: true } },
+        client: { select: { id: true, name: true, phone: true } },
+        barber: {
+          include: {
+            user: { select: { id: true, name: true } },
+          },
+        },
+        service: true,
+      },
+      orderBy: [{ date: 'desc' }, { timeSlot: 'desc' }],
+    });
+
+    return bookings;
+  }
+
   async cancelBookingByClient(bookingId: string, clientId: string) {
     const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
 

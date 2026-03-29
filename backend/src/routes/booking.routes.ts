@@ -29,6 +29,13 @@ router.get(
 );
 
 router.get(
+  '/barber/my',
+  authenticate,
+  authorize('BARBER', 'ADMIN'),
+  (req, res, next) => bookingController.getMyBarberBookings(req, res, next)
+);
+
+router.get(
   '/shop/:shopId',
   authenticate,
   authorize('OWNER', 'BARBER', 'ADMIN'),

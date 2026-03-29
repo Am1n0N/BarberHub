@@ -123,16 +123,20 @@ export interface User {
   id: string;
   name: string;
   phone: string;
+  email?: string;
   role: 'owner' | 'barber' | 'client' | 'OWNER' | 'BARBER' | 'CLIENT' | 'ADMIN';
   shop?: string | { id: string; name: string; slug: string };
+  barber?: { id: string; isAvailable: boolean; commissionRate: number };
 }
 
 export interface MeResponse {
   id: string;
   name: string;
   phone: string;
+  email?: string;
   role: string;
   shop?: { id: string; name: string; slug: string } | null;
+  barber?: { id: string; isAvailable: boolean; commissionRate: number } | null;
 }
 
 export type ShopRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';

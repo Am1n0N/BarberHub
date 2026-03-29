@@ -6,6 +6,7 @@ import { getTranslation } from '@/i18n/config';
 import { Booking } from '@/lib/types';
 import { api } from '@/lib/api';
 import { useShop } from '@/hooks/useShop';
+import { useAuth } from '@/hooks/useAuth';
 import { transformBooking } from '@/lib/transformers';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -18,23 +19,28 @@ export default function BookingsPage() {
   const t = getTranslation(locale);
   const isRtl = locale === 'derja';
   const { shop, loading: shopLoading } = useShop();
+  const { user } = useAuth();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
 
+  const isBarber = user?.role?.toUpperCase() === 'BARBER';
+
   const fetchBookings = useCallback(async () => {
     if (!shop) return;
     try {
       setLoading(true);
-      const data = await api.getShopBookings(shop.id);
+      const data = isBarber
+        ? await api.getBarberMyBookings()
+        : await api.getShopBookings(shop.id);
       setBookings((data as unknown[]).map((b) => transformBooking(b, locale)));
     } catch {
       // Silently handle
     } finally {
       setLoading(false);
     }
-  }, [shop, locale]);
+  }, [shop, locale, isBarber]);
 
   useEffect(() => {
     fetchBookings();
@@ -62,7 +68,11 @@ export default function BookingsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('booking.title')}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isBarber
+            ? (isRtl ? 'الرندي-فو متاعي' : 'Mes rendez-vous')
+            : t('booking.title')}
+        </h1>
       </div>
 
       {/* Filters */}
@@ -96,8 +106,10 @@ export default function BookingsPage() {
                 <p className="font-semibold text-gray-900 text-lg">{booking.clientName}</p>
                 <p className="text-sm text-gray-500 mt-0.5">📱 {booking.clientPhone}</p>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="text-sm text-gray-600">✂️ {booking.barberName}</span>
-                  <span className="text-sm text-gray-600">• {booking.serviceName}</span>
+                  {!isBarber && (
+                    <span className="text-sm text-gray-600">✂️ {booking.barberName}</span>
+                  )}
+                  <span className="text-sm text-gray-600">{!isBarber ? '• ' : ''}{booking.serviceName}</span>
                 </div>
               </div>
               <div className="text-right">
