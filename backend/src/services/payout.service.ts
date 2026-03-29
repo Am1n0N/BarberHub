@@ -38,10 +38,18 @@ export class PayoutService {
       include: { service: true },
     });
 
+    // Group entries by barberId using a Map for O(n) lookup instead of filtering per barber
+    const entriesByBarber = new Map<string, typeof allCompletedEntries>();
+    for (const entry of allCompletedEntries) {
+      if (entry.barberId) {
+        const existing = entriesByBarber.get(entry.barberId) ?? [];
+        existing.push(entry);
+        entriesByBarber.set(entry.barberId, existing);
+      }
+    }
+
     for (const barber of barbers) {
-      const completedEntries = allCompletedEntries.filter(
-        (entry) => entry.barberId === barber.id
-      );
+      const completedEntries = entriesByBarber.get(barber.id) ?? [];
 
       const totalRevenue = completedEntries.reduce((sum, entry) => {
         return sum + (entry.service?.price ?? 0);
