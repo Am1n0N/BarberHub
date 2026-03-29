@@ -131,7 +131,12 @@ export class ShopService {
       include: { user: { select: { id: true, name: true, phone: true } } },
     });
 
-    return barbers;
+    // Map user.name to barber.name
+    return barbers.map((barber) => ({
+      ...barber,
+      name: barber.user.name,
+      phone: barber.user.phone,
+    }));
   }
 
   async addBarber(shopId: string, ownerId: string, userId: string, commissionRate?: number) {
