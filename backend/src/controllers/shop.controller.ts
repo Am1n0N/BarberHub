@@ -3,9 +3,10 @@ import { AuthRequest } from '../types';
 import { shopService } from '../services/shop.service';
 
 export class ShopController {
-  async listShops(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async listShops(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const shops = await shopService.listShops();
+      const gender = req.query.gender as string | undefined;
+      const shops = await shopService.listShops(gender);
       res.json(shops);
     } catch (err) {
       next(err);
@@ -14,12 +15,13 @@ export class ShopController {
 
   async createShop(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { name, address, city, phone, openingHours, latitude, longitude } = req.body;
+      const { name, address, city, phone, gender, openingHours, latitude, longitude } = req.body;
       const shop = await shopService.createShop({
         name,
         address,
         city,
         phone,
+        gender,
         ownerId: req.user!.id,
         openingHours,
         latitude: latitude !== undefined ? Number(latitude) : undefined,

@@ -118,7 +118,15 @@
     "city": "Ville",
     "phone": "Téléphone",
     "openNow": "Ouvert",
-    "closed": "Fermé"
+    "closed": "Fermé",
+    "gender": "Type de salon",
+    "genderMen": "Hommes",
+    "genderWomen": "Femmes",
+    "genderUnisex": "Mixte",
+    "filterAll": "Tous",
+    "filterMen": "Salons hommes",
+    "filterWomen": "Salons femmes",
+    "filterUnisex": "Mixte"
   },
   "tv": {
     "welcomeTo": "Bienvenue chez",

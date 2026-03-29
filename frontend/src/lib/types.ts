@@ -1,3 +1,5 @@
+export type ShopGender = 'MEN' | 'WOMEN' | 'UNISEX';
+
 export interface Shop {
   id: string;
   name: string;
@@ -5,6 +7,7 @@ export interface Shop {
   address: string;
   city: string;
   phone: string;
+  gender: ShopGender;
   owner: string;
   latitude?: number | null;
   longitude?: number | null;
@@ -26,6 +29,7 @@ export interface ShopMapItem {
   address: string;
   city: string;
   phone: string;
+  gender: ShopGender;
   latitude: number | null;
   longitude: number | null;
   isActive: boolean;
@@ -149,6 +153,7 @@ export interface ShopRequest {
   shopName: string;
   address: string;
   city: string;
+  gender?: ShopGender;
   message?: string;
   status: ShopRequestStatus;
   reviewNote?: string;

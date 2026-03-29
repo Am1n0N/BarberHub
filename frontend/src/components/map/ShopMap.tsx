@@ -59,13 +59,25 @@ export default function ShopMap({ shops, locale }: ShopMapProps) {
         const bookLabel = isRtl ? 'احجز رندي-فو' : 'Prendre rendez-vous';
         const addressLabel = isRtl ? 'العنوان' : 'Adresse';
         const phoneLabel = isRtl ? 'التليفون' : 'Téléphone';
+        const genderIcon = shop.gender === 'WOMEN' ? '💅' : shop.gender === 'UNISEX' ? '✨' : '💈';
+        const genderLabel = shop.gender === 'WOMEN'
+          ? (isRtl ? 'نساء' : 'Femmes')
+          : shop.gender === 'UNISEX'
+            ? (isRtl ? 'مختلط' : 'Mixte')
+            : (isRtl ? 'رجال' : 'Hommes');
+        const genderColor = shop.gender === 'WOMEN' ? '#db2777' : shop.gender === 'UNISEX' ? '#7c3aed' : '#2563eb';
 
         const popupContent = `
           <div style="min-width:200px;font-family:system-ui,sans-serif;">
-            <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:#1e40af;">
-              💈 ${shop.name}
+            <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:${genderColor};">
+              ${genderIcon} ${shop.name}
             </p>
-            <p style="margin:0 0 2px;font-size:13px;color:#6b7280;">
+            <p style="margin:0 0 2px;font-size:12px;">
+              <span style="background:${genderColor}15;color:${genderColor};padding:2px 8px;border-radius:12px;font-weight:600;font-size:11px;">
+                ${genderLabel}
+              </span>
+            </p>
+            <p style="margin:4px 0 2px;font-size:13px;color:#6b7280;">
               📍 ${addressLabel}: ${shop.address}, ${shop.city}
             </p>
             <p style="margin:0 0 10px;font-size:13px;color:#6b7280;">
@@ -75,7 +87,7 @@ export default function ShopMap({ shops, locale }: ShopMapProps) {
               id="book-btn-${shop.id}"
               style="
                 display:block;width:100%;padding:8px 12px;
-                background:#2563eb;color:#fff;border:none;
+                background:${genderColor};color:#fff;border:none;
                 border-radius:8px;font-size:14px;font-weight:600;
                 cursor:pointer;text-align:center;
               "

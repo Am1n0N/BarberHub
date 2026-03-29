@@ -6,9 +6,13 @@ import { notifyBarberCreated, NotificationResult } from './notification.service'
 const prisma = new PrismaClient();
 
 export class ShopService {
-  async listShops() {
+  async listShops(gender?: string) {
+    const where: Record<string, unknown> = { isActive: true };
+    if (gender && ['MEN', 'WOMEN', 'UNISEX'].includes(gender)) {
+      where.gender = gender;
+    }
     const shops = await prisma.shop.findMany({
-      where: { isActive: true },
+      where,
       select: {
         id: true,
         name: true,
@@ -16,6 +20,7 @@ export class ShopService {
         address: true,
         city: true,
         phone: true,
+        gender: true,
         latitude: true,
         longitude: true,
         openingHours: true,
@@ -31,6 +36,7 @@ export class ShopService {
     city: string;
     phone: string;
     ownerId: string;
+    gender?: string;
     openingHours?: Record<string, unknown>;
     latitude?: number;
     longitude?: number;
@@ -59,6 +65,7 @@ export class ShopService {
         address: data.address,
         city: data.city,
         phone: data.phone,
+        gender: (data.gender as 'MEN' | 'WOMEN' | 'UNISEX') ?? 'MEN',
         ownerId: data.ownerId,
         openingHours: data.openingHours as Prisma.InputJsonValue ?? undefined,
         latitude: data.latitude,
@@ -97,6 +104,7 @@ export class ShopService {
       address?: string;
       city?: string;
       phone?: string;
+      gender?: string;
       openingHours?: Record<string, unknown>;
       tvDisplayUrl?: string;
       isActive?: boolean;
@@ -114,9 +122,13 @@ export class ShopService {
       throw Object.assign(new Error('Not authorized'), { statusCode: 403 });
     }
 
+    const { gender: genderRaw, openingHours, ...rest } = data;
     const updateData: Prisma.ShopUpdateInput = {
-      ...data,
-      openingHours: data.openingHours as Prisma.InputJsonValue ?? undefined,
+      ...rest,
+      openingHours: openingHours as Prisma.InputJsonValue ?? undefined,
+      ...(genderRaw && ['MEN', 'WOMEN', 'UNISEX'].includes(genderRaw)
+        ? { gender: genderRaw as 'MEN' | 'WOMEN' | 'UNISEX' }
+        : {}),
     };
 
     const updated = await prisma.shop.update({

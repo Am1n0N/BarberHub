@@ -118,7 +118,15 @@
     "city": "المدينة",
     "phone": "التليفون",
     "openNow": "حالّ تو",
-    "closed": "مسكّر"
+    "closed": "مسكّر",
+    "gender": "نوع الحانوت",
+    "genderMen": "رجال",
+    "genderWomen": "نساء",
+    "genderUnisex": "رجال و نساء",
+    "filterAll": "الكل",
+    "filterMen": "حوانيت رجال",
+    "filterWomen": "حوانيت نساء",
+    "filterUnisex": "مختلط"
   },
   "tv": {
     "welcomeTo": "مرحبا بيك في",
