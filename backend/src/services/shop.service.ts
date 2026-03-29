@@ -209,28 +209,28 @@ export class ShopService {
   }
 
   async updateService(serviceId: string, ownerId: string, data: { nameDerja?: string; nameFr?: string; price?: number; durationMin?: number; isActive?: boolean }) {
-    const service = await prisma.service.findUnique({ where: { id: serviceId }, include: { shop: true } });
+    const service = await prisma.service.findUnique({ where: { id: serviceId }, include: { shop: { select: { ownerId: true } } } });
     if (!service) throw Object.assign(new Error('Service not found'), { statusCode: 404 });
     if (service.shop.ownerId !== ownerId) throw Object.assign(new Error('Not authorized'), { statusCode: 403 });
     return prisma.service.update({ where: { id: serviceId }, data });
   }
 
   async deleteService(serviceId: string, ownerId: string) {
-    const service = await prisma.service.findUnique({ where: { id: serviceId }, include: { shop: true } });
+    const service = await prisma.service.findUnique({ where: { id: serviceId }, include: { shop: { select: { ownerId: true } } } });
     if (!service) throw Object.assign(new Error('Service not found'), { statusCode: 404 });
     if (service.shop.ownerId !== ownerId) throw Object.assign(new Error('Not authorized'), { statusCode: 403 });
     return prisma.service.update({ where: { id: serviceId }, data: { isActive: false } });
   }
 
   async updateBarber(barberId: string, ownerId: string, data: { commissionRate?: number }) {
-    const barber = await prisma.barber.findUnique({ where: { id: barberId }, include: { shop: true } });
+    const barber = await prisma.barber.findUnique({ where: { id: barberId }, include: { shop: { select: { ownerId: true } } } });
     if (!barber) throw Object.assign(new Error('Barber not found'), { statusCode: 404 });
     if (barber.shop.ownerId !== ownerId) throw Object.assign(new Error('Not authorized'), { statusCode: 403 });
     return prisma.barber.update({ where: { id: barberId }, data, include: { user: { select: { id: true, name: true, phone: true } } } });
   }
 
   async toggleBarberAvailability(barberId: string, ownerId: string) {
-    const barber = await prisma.barber.findUnique({ where: { id: barberId }, include: { shop: true } });
+    const barber = await prisma.barber.findUnique({ where: { id: barberId }, include: { shop: { select: { ownerId: true } } } });
     if (!barber) throw Object.assign(new Error('Barber not found'), { statusCode: 404 });
     if (barber.shop.ownerId !== ownerId) throw Object.assign(new Error('Not authorized'), { statusCode: 403 });
     return prisma.barber.update({ where: { id: barberId }, data: { isAvailable: !barber.isAvailable }, include: { user: { select: { id: true, name: true, phone: true } } } });

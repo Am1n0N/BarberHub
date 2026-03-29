@@ -105,28 +105,36 @@ export class ShopController {
     try {
       const service = await shopService.updateService(req.params.serviceId as string, req.user!.id, req.body);
       res.json(service);
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   }
 
   async deleteService(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await shopService.deleteService(req.params.serviceId as string, req.user!.id);
       res.json({ success: true });
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   }
 
   async updateBarber(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const barber = await shopService.updateBarber(req.params.barberId as string, req.user!.id, req.body);
       res.json(barber);
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   }
 
   async toggleBarberAvailability(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const barber = await shopService.toggleBarberAvailability(req.params.barberId as string, req.user!.id);
       res.json(barber);
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   }
 }
 
