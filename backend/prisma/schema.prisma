@@ -14,6 +14,7 @@ model User {
   email        String?
   password     String
   role         Role         @default(CLIENT)
+  gender       Gender?
   language     String       @default("derja")
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
@@ -30,6 +31,17 @@ enum Role {
   ADMIN
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum ShopGender {
+  MEN
+  WOMEN
+  UNISEX
+}
+
 model Shop {
   id           String       @id @default(uuid())
   name         String
@@ -37,6 +49,7 @@ model Shop {
   address      String
   city         String
   phone        String
+  gender       ShopGender   @default(MEN)
   ownerId      String       @unique
   owner        User         @relation("ShopOwner", fields: [ownerId], references: [id])
   barbers      Barber[]
@@ -151,6 +164,7 @@ model ShopRequest {
   shopName    String
   address     String
   city        String
+  gender      ShopGender        @default(MEN)
   message     String?
   status      ShopRequestStatus @default(PENDING)
   reviewNote  String?

@@ -34,6 +34,7 @@ export class AdminService {
     address: string;
     city: string;
     phone: string;
+    gender?: string;
     latitude?: number;
     longitude?: number;
     openingHours?: Record<string, unknown>;
@@ -68,6 +69,7 @@ export class AdminService {
           address: data.address,
           city: data.city,
           phone: data.phone,
+          gender: (data.gender as 'MEN' | 'WOMEN' | 'UNISEX') ?? 'MEN',
           ownerId: user.id,
           latitude: data.latitude,
           longitude: data.longitude,
@@ -116,6 +118,7 @@ export class AdminService {
     shopName: string;
     address: string;
     city: string;
+    gender?: string;
     message?: string;
   }) {
     // Prevent duplicate pending requests from same phone
@@ -128,7 +131,18 @@ export class AdminService {
       });
     }
 
-    return prisma.shopRequest.create({ data });
+    return prisma.shopRequest.create({
+      data: {
+        ownerName: data.ownerName,
+        ownerPhone: data.ownerPhone,
+        ownerEmail: data.ownerEmail,
+        shopName: data.shopName,
+        address: data.address,
+        city: data.city,
+        gender: (data.gender as 'MEN' | 'WOMEN' | 'UNISEX') ?? 'MEN',
+        message: data.message,
+      },
+    });
   }
 
   async reviewRequest(
@@ -154,6 +168,7 @@ export class AdminService {
         address: request.address,
         city: request.city,
         phone: request.ownerPhone,
+        gender: request.gender,
       });
 
       // Send credentials to the owner (email + WhatsApp)
