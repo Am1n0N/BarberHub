@@ -47,7 +47,7 @@ export default function ServicesPage() {
 
   const toggleActive = async (id: string) => {
     if (!shop) return;
-    const service = services.find((s) => s._id === id);
+    const service = services.find((s) => s.id === id);
     if (!service) return;
     try {
       await api.updateService(shop.id, id, { isActive: !service.isActive } as Partial<Service>);
@@ -62,7 +62,7 @@ export default function ServicesPage() {
 
     try {
       if (editingService) {
-        await api.updateService(shop.id, editingService._id, {
+        await api.updateService(shop.id, editingService.id, {
           nameDerja: form.name,
           nameFr: form.nameFr,
           price: parseFloat(form.price),
@@ -86,7 +86,7 @@ export default function ServicesPage() {
   const openEdit = (service: Service) => {
     setEditingService(service);
     setForm({
-      name: service.name,
+      name: service.nameDerja,
       nameFr: service.nameFr,
       price: service.price.toString(),
       duration: service.duration.toString(),
@@ -130,14 +130,14 @@ export default function ServicesPage() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {services.map((service) => (
-          <Card key={service._id} hover>
+          <Card key={service.id} hover>
             <div className="flex items-start justify-between mb-3">
               <div>
                 <p className="font-semibold text-gray-900 text-lg">
-                  {isRtl ? service.name : service.nameFr}
+                  {isRtl ? service.nameDerja : service.nameFr}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {isRtl ? service.nameFr : service.name}
+                  {isRtl ? service.nameFr : service.nameDerja}
                 </p>
               </div>
               <Badge
@@ -163,10 +163,10 @@ export default function ServicesPage() {
               <Button size="sm" variant="ghost" onClick={() => openEdit(service)}>
                 {isRtl ? '✏️ عدّل' : '✏️ Modifier'}
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => toggleActive(service._id)}>
+              <Button size="sm" variant="ghost" onClick={() => toggleActive(service.id)}>
                 {service.isActive ? (isRtl ? '⏸ وقّف' : '⏸ Désactiver') : (isRtl ? '▶ فعّل' : '▶ Activer')}
               </Button>
-              <Button size="sm" variant="ghost" className="text-red-500" onClick={() => handleDelete(service._id)}>
+              <Button size="sm" variant="ghost" className="text-red-500" onClick={() => handleDelete(service.id)}>
                 🗑
               </Button>
             </div>

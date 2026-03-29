@@ -1,16 +1,33 @@
 import { Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
 import { AuthRequest } from '../types';
 import { bookingService } from '../services/booking.service';
+
+const prisma = new PrismaClient();
 
 export class BookingController {
   async createBooking(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { shopId, barberId, serviceId, date, timeSlot } = req.body;
+      const { shop, barber, service, date, timeSlot, clientName, clientPhone } = req.body;
+      
+      // Find or create client
+      let client = await prisma.user.findUnique({ where: { phone: clientPhone } });
+      if (!client) {
+        client = await prisma.user.create({
+          data: {
+            phone: clientPhone,
+            name: clientName,
+            role: 'CLIENT',
+            password: clientPhone, // Temporary password for anonymous clients
+          },
+        });
+      }
+      
       const booking = await bookingService.createBooking({
-        shopId,
-        clientId: req.user!.id,
-        barberId,
-        serviceId,
+        shopId: shop,
+        clientId: client.id,
+        barberId: barber,
+        serviceId: service,
         date,
         timeSlot,
       });

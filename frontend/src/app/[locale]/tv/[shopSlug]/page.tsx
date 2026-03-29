@@ -24,10 +24,10 @@ export default function TvDisplayPage() {
       try {
         const shopData = await api.getShop(shopSlug);
         setShop(shopData);
-        const queueData = await api.getQueue(shopData._id);
+        const queueData = await api.getQueue(shopData.id);
         setQueue(queueData);
 
-        joinTvRoom(shopData._id);
+        joinTvRoom(shopData.id);
         const socket = getSocket();
 
         socket.on('queue:update', (updatedQueue: QueueEntry[]) => {
@@ -101,7 +101,7 @@ export default function TvDisplayPage() {
             ) : (
               inProgress.map((entry) => (
                 <div
-                  key={entry._id}
+                  key={entry.id}
                   className="bg-gradient-to-r from-green-600/20 to-green-500/10 border border-green-500/30 rounded-2xl p-8"
                 >
                   <div className="flex items-center justify-between">
@@ -139,7 +139,7 @@ export default function TvDisplayPage() {
             ) : (
               waiting.map((entry, i) => (
                 <div
-                  key={entry._id}
+                  key={entry.id}
                   className="bg-white/5 border border-white/10 rounded-xl p-6 flex items-center gap-6"
                 >
                   <div className="w-14 h-14 bg-yellow-500/20 rounded-full flex items-center justify-center">

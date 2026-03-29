@@ -90,16 +90,16 @@ async function main() {
 
   // Services
   const service1 = await prisma.service.create({
-    data: { shopId: shop.id, nameDerja: 'حلاقة بسيطة', nameFr: 'Coupe simple', price: 15, durationMin: 20 },
+    data: { shopId: shop.id, nameDerja: 'حلاقة بسيطة', nameFr: 'Coupe simple', price: 15, durationMin: 20, isActive: true },
   });
   const service2 = await prisma.service.create({
-    data: { shopId: shop.id, nameDerja: 'لحية', nameFr: 'Taille de barbe', price: 10, durationMin: 15 },
+    data: { shopId: shop.id, nameDerja: 'لحية', nameFr: 'Taille de barbe', price: 10, durationMin: 15, isActive: true },
   });
   const service3 = await prisma.service.create({
-    data: { shopId: shop.id, nameDerja: 'باكاج كامل', nameFr: 'Forfait complet', price: 30, durationMin: 40 },
+    data: { shopId: shop.id, nameDerja: 'باكاج كامل', nameFr: 'Forfait complet', price: 30, durationMin: 40, isActive: true },
   });
   const service4 = await prisma.service.create({
-    data: { shopId: shop.id, nameDerja: 'حلاقة صغار', nameFr: 'Coupe enfant', price: 10, durationMin: 15 },
+    data: { shopId: shop.id, nameDerja: 'حلاقة صغار', nameFr: 'Coupe enfant', price: 10, durationMin: 15, isActive: true },
   });
 
   // Queue entries (active)

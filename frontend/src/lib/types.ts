@@ -1,5 +1,5 @@
 export interface Shop {
-  _id: string;
+  id: string;
   name: string;
   slug: string;
   address: string;
@@ -32,7 +32,7 @@ export interface ShopMapItem {
 }
 
 export interface Barber {
-  _id: string;
+  id: string;
   name: string;
   phone: string;
   shop: string;
@@ -43,9 +43,9 @@ export interface Barber {
 }
 
 export interface Service {
-  _id: string;
+  id: string;
   shop: string;
-  name: string;
+  nameDerja: string;
   nameFr: string;
   price: number;
   duration: number;
@@ -55,7 +55,7 @@ export interface Service {
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
 
 export interface Booking {
-  _id: string;
+  id: string;
   shop: string;
   client: string;
   clientName: string;
@@ -75,7 +75,7 @@ export interface Booking {
 export type QueueStatus = 'WAITING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
 
 export interface QueueEntry {
-  _id: string;
+  id: string;
   shop: string;
   client?: string;
   clientName: string;
@@ -94,7 +94,7 @@ export interface QueueEntry {
 }
 
 export interface Payout {
-  _id: string;
+  id: string;
   shop: string;
   barber: string;
   barberName: string;
@@ -117,7 +117,7 @@ export interface DailyPayoutSummary {
 }
 
 export interface User {
-  _id: string;
+  id: string;
   name: string;
   phone: string;
   role: 'owner' | 'barber' | 'client' | 'OWNER' | 'BARBER' | 'CLIENT' | 'ADMIN';

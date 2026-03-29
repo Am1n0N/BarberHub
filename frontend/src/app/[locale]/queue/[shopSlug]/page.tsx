@@ -40,14 +40,14 @@ export default function QueueShopPage() {
     load();
   }, [shopSlug]);
 
-  const { activeQueue, waiting, currentlyServing, loading: queueLoading } = useQueue(shop?._id || '');
+  const { activeQueue, waiting, currentlyServing, loading: queueLoading } = useQueue(shop?.id || '');
 
   const handleJoinQueue = async () => {
     if (!shop || !clientName.trim()) return;
     setJoining(true);
     try {
       const entry = await api.addToQueue({
-        shopId: shop._id,
+        shopId: shop.id,
         clientName: clientName.trim(),
       });
       setJoined(true);

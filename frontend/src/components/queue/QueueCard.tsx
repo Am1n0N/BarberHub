@@ -91,29 +91,29 @@ export default function QueueCard({
           {entry.status === 'WAITING' && (
             <>
               {onMoveUp && (
-                <Button size="sm" variant="ghost" onClick={() => onMoveUp(entry._id)}>
+                <Button size="sm" variant="ghost" onClick={() => onMoveUp(entry.id)}>
                   ↑
                 </Button>
               )}
               {onMoveDown && (
-                <Button size="sm" variant="ghost" onClick={() => onMoveDown(entry._id)}>
+                <Button size="sm" variant="ghost" onClick={() => onMoveDown(entry.id)}>
                   ↓
                 </Button>
               )}
               {onStart && (
-                <Button size="sm" variant="primary" onClick={() => onStart(entry._id)}>
+                <Button size="sm" variant="primary" onClick={() => onStart(entry.id)}>
                   {isRtl ? 'ابدا' : 'Commencer'}
                 </Button>
               )}
               {onCancel && (
-                <Button size="sm" variant="danger" onClick={() => onCancel(entry._id)}>
+                <Button size="sm" variant="danger" onClick={() => onCancel(entry.id)}>
                   {isRtl ? 'ألغي' : 'Annuler'}
                 </Button>
               )}
             </>
           )}
           {entry.status === 'IN_PROGRESS' && onComplete && (
-            <Button size="sm" variant="primary" onClick={() => onComplete(entry._id)}>
+            <Button size="sm" variant="primary" onClick={() => onComplete(entry.id)}>
               {isRtl ? 'كمّل' : 'Terminer'}
             </Button>
           )}

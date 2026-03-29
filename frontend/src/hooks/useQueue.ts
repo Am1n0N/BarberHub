@@ -38,11 +38,11 @@ export function useQueue(shopId: string) {
     });
 
     socket.on('queue:entry:updated', (entry: QueueEntry) => {
-      setQueue((prev) => prev.map((e) => (e._id === entry._id ? entry : e)));
+      setQueue((prev) => prev.map((e) => (e.id === entry.id ? entry : e)));
     });
 
     socket.on('queue:entry:removed', (entryId: string) => {
-      setQueue((prev) => prev.filter((e) => e._id !== entryId));
+      setQueue((prev) => prev.filter((e) => e.id !== entryId));
     });
 
     return () => {

@@ -23,10 +23,10 @@ export default function ServicePicker({ services, locale = 'derja', selected, on
           .filter((s) => s.isActive)
           .map((service) => (
             <button
-              key={service._id}
-              onClick={() => onSelect(service._id)}
+              key={service.id}
+              onClick={() => onSelect(service.id)}
               className={`w-full text-start p-4 rounded-xl border-2 transition-all ${
-                selected === service._id
+                selected === service.id
                   ? 'border-blue-600 bg-blue-50'
                   : 'border-gray-100 hover:border-gray-200 bg-white'
               }`}
@@ -34,7 +34,7 @@ export default function ServicePicker({ services, locale = 'derja', selected, on
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-gray-900">
-                    {isRtl ? service.name : service.nameFr}
+                    {isRtl ? service.nameDerja : service.nameFr}
                   </p>
                   <p className="text-sm text-gray-500 mt-0.5">
                     {formatDuration(service.duration, locale)}

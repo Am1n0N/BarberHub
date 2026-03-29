@@ -61,8 +61,8 @@ export default function WalkInForm({
           >
             <option value="">{isRtl ? 'اختار خدمة' : 'Choisir un service'}</option>
             {services.map((s) => (
-              <option key={s._id} value={s._id}>
-                {isRtl ? s.name : s.nameFr} - {s.price} DT
+              <option key={s.id} value={s.id}>
+                {isRtl ? s.nameDerja : s.nameFr} - {s.price} DT
               </option>
             ))}
           </select>
@@ -83,7 +83,7 @@ export default function WalkInForm({
             {barbers
               .filter((b) => b.isAvailable)
               .map((b) => (
-                <option key={b._id} value={b._id}>
+                <option key={b.id} value={b.id}>
                   {b.name}
                 </option>
               ))}

@@ -4,7 +4,7 @@ import { QueueEntry, Service, Barber, Booking } from './types';
 
 export function transformQueueEntry(entry: any, locale = 'derja'): QueueEntry {
   return {
-    _id: entry.id ?? entry._id,
+    id: entry.id ?? entry._id,
     shop: entry.shopId ?? entry.shop,
     client: entry.clientId ?? entry.client,
     clientName: entry.clientName,
@@ -27,11 +27,9 @@ export function transformQueueEntry(entry: any, locale = 'derja'): QueueEntry {
 
 export function transformService(service: any, locale = 'derja'): Service {
   return {
-    _id: service.id ?? service._id,
+    id: service.id ?? service._id,
     shop: service.shopId ?? service.shop,
-    name: locale === 'derja'
-      ? (service.nameDerja ?? service.name)
-      : (service.nameFr ?? service.name),
+    nameDerja: service.nameDerja ?? service.name,
     nameFr: service.nameFr,
     price: service.price,
     duration: service.durationMin ?? service.duration,
@@ -41,7 +39,7 @@ export function transformService(service: any, locale = 'derja'): Service {
 
 export function transformBarber(barber: any): Barber {
   return {
-    _id: barber.id ?? barber._id,
+    id: barber.id ?? barber._id,
     name: barber.user?.name ?? barber.name,
     phone: barber.user?.phone ?? barber.phone,
     shop: barber.shopId ?? barber.shop,
@@ -53,7 +51,7 @@ export function transformBarber(barber: any): Barber {
 
 export function transformBooking(booking: any, locale = 'derja'): Booking {
   return {
-    _id: booking.id ?? booking._id,
+    id: booking.id ?? booking._id,
     shop: booking.shopId ?? booking.shop,
     client: booking.clientId ?? booking.client,
     clientName: booking.client?.name ?? booking.clientName ?? '',
