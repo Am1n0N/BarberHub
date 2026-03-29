@@ -55,6 +55,8 @@ export default function LoginPage() {
         router.push(`/${locale}/admin`);
       } else if (role === 'OWNER' || role === 'BARBER') {
         router.push(`/${locale}/dashboard`);
+      } else if (role === 'CLIENT') {
+        router.push(`/${locale}/my-bookings`);
       } else {
         router.push(`/${locale}`);
       }

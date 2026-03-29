@@ -10,22 +10,35 @@ export class BookingController {
     try {
       const { shop, barber, service, date, timeSlot, clientName, clientPhone } = req.body;
       
-      // Find or create client
-      let client = await prisma.user.findUnique({ where: { phone: clientPhone } });
-      if (!client) {
-        client = await prisma.user.create({
-          data: {
-            phone: clientPhone,
-            name: clientName,
-            role: 'CLIENT',
-            password: clientPhone, // Temporary password for anonymous clients
-          },
-        });
+      let clientId: string;
+
+      if (req.user) {
+        // Authenticated user — use their ID directly
+        clientId = req.user.id;
+      } else {
+        // Anonymous booking — require name and phone
+        if (!clientName || !clientPhone) {
+          throw Object.assign(new Error('Client name and phone are required for anonymous bookings'), { statusCode: 400 });
+        }
+        let client = await prisma.user.findUnique({ where: { phone: clientPhone } });
+        if (!client) {
+          const bcrypt = await import('bcryptjs');
+          const hashedPassword = await bcrypt.hash(clientPhone, 10);
+          client = await prisma.user.create({
+            data: {
+              phone: clientPhone,
+              name: clientName,
+              role: 'CLIENT',
+              password: hashedPassword,
+            },
+          });
+        }
+        clientId = client.id;
       }
-      
+
       const booking = await bookingService.createBooking({
         shopId: shop,
-        clientId: client.id,
+        clientId,
         barberId: barber,
         serviceId: service,
         date,
@@ -45,6 +58,27 @@ export class BookingController {
         date
       );
       res.json(bookings);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getMyBookings(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const bookings = await bookingService.getBookingsForClient(req.user!.id);
+      res.json(bookings);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async cancelBooking(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const booking = await bookingService.cancelBookingByClient(
+        req.params.id as string,
+        req.user!.id
+      );
+      res.json(booking);
     } catch (err) {
       next(err);
     }

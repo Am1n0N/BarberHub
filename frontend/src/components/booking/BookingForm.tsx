@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Service, Barber } from '@/lib/types';
+import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
 import ServicePicker from './ServicePicker';
 import BarberPicker from './BarberPicker';
@@ -29,13 +30,14 @@ export default function BookingForm({
   onSubmit,
   loading = false,
 }: BookingFormProps) {
+  const { user, isAuthenticated } = useAuth();
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<string>('');
   const [selectedBarber, setSelectedBarber] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [clientName, setClientName] = useState('');
-  const [clientPhone, setClientPhone] = useState('');
+  const [clientName, setClientName] = useState(user?.name ?? '');
+  const [clientPhone, setClientPhone] = useState(user?.phone ?? '');
   const isRtl = locale === 'derja';
 
   const steps = isRtl
@@ -154,20 +156,39 @@ export default function BookingForm({
           </div>
 
           <div className="space-y-3">
-            <input
-              type="text"
-              placeholder={isRtl ? 'اسمك' : 'Votre nom'}
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <input
-              type="tel"
-              placeholder={isRtl ? 'نمرة التليفون' : 'Numéro de téléphone'}
-              value={clientPhone}
-              onChange={(e) => setClientPhone(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+            {isAuthenticated && user ? (
+              <div className="bg-blue-50 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                  <span className="text-blue-600 font-semibold text-sm">
+                    {user.name?.charAt(0).toUpperCase() ?? 'U'}
+                  </span>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{user.name}</p>
+                  <p className="text-sm text-gray-500">{user.phone}</p>
+                </div>
+                <span className="ml-auto text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
+                  {isRtl ? '✓ داخل' : '✓ Connecté'}
+                </span>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  placeholder={isRtl ? 'اسمك' : 'Votre nom'}
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <input
+                  type="tel"
+                  placeholder={isRtl ? 'نمرة التليفون' : 'Numéro de téléphone'}
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </>
+            )}
           </div>
 
           <Button
@@ -175,7 +196,7 @@ export default function BookingForm({
             className="w-full"
             onClick={handleSubmit}
             loading={loading}
-            disabled={!clientName || !clientPhone}
+            disabled={!isAuthenticated && (!clientName.trim() || !clientPhone.trim())}
           >
             {isRtl ? '✅ أكّد الرندي-فو' : '✅ Confirmer le rendez-vous'}
           </Button>

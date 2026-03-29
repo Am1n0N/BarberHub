@@ -30,6 +30,7 @@ export default function Navbar() {
   const canAccessDashboard =
     userRole === 'OWNER' || userRole === 'BARBER' || userRole === 'ADMIN';
   const isAdmin = userRole === 'ADMIN';
+  const isClient = userRole === 'CLIENT';
 
   const handleLogout = () => {
     setMenuOpen(false);
@@ -79,6 +80,16 @@ export default function Navbar() {
                     className="hidden sm:block text-sm font-medium text-red-600 hover:text-red-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
                   >
                     {rtl ? 'الإدارة' : 'Admin'}
+                  </Link>
+                )}
+
+                {/* My Bookings link (desktop, CLIENT only) */}
+                {isClient && (
+                  <Link
+                    href={`/${locale}/my-bookings`}
+                    className="hidden sm:block text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-50"
+                  >
+                    {rtl ? 'رندي-فواتي' : 'Mes RDV'}
                   </Link>
                 )}
 
@@ -140,6 +151,17 @@ export default function Navbar() {
                           >
                             <span>⚙️</span>
                             {rtl ? 'الإدارة' : 'Admin'}
+                          </Link>
+                        )}
+
+                        {isClient && (
+                          <Link
+                            href={`/${locale}/my-bookings`}
+                            onClick={() => setMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            <span>📅</span>
+                            {rtl ? 'رندي-فواتي' : 'Mes rendez-vous'}
                           </Link>
                         )}
 

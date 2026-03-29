@@ -1,23 +1,31 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { bookingController } from '../controllers/booking.controller';
-import { authenticate, authorize } from '../middleware/auth';
+import { authenticate, authenticateOptional, authorize } from '../middleware/auth';
 import { validate } from '../middleware/validate';
 
 const router = Router();
 
 router.post(
   '/',
+  authenticateOptional,
   validate([
     body('shop').notEmpty().withMessage('Shop ID is required'),
     body('barber').notEmpty().withMessage('Barber ID is required'),
     body('service').notEmpty().withMessage('Service ID is required'),
     body('date').notEmpty().isISO8601().withMessage('Valid date is required'),
     body('timeSlot').notEmpty().withMessage('Time slot is required'),
-    body('clientName').notEmpty().withMessage('Client name is required'),
-    body('clientPhone').notEmpty().withMessage('Client phone is required'),
+    body('clientName').optional(),
+    body('clientPhone').optional(),
   ]),
   (req, res, next) => bookingController.createBooking(req, res, next)
+);
+
+router.get(
+  '/my',
+  authenticate,
+  authorize('CLIENT', 'ADMIN'),
+  (req, res, next) => bookingController.getMyBookings(req, res, next)
 );
 
 router.get(
@@ -47,6 +55,13 @@ router.patch(
       .withMessage('Invalid status'),
   ]),
   (req, res, next) => bookingController.updateStatus(req, res, next)
+);
+
+router.patch(
+  '/:id/cancel',
+  authenticate,
+  authorize('CLIENT', 'ADMIN'),
+  (req, res, next) => bookingController.cancelBooking(req, res, next)
 );
 
 router.patch(
