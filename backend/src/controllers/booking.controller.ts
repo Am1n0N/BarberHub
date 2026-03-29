@@ -18,8 +18,7 @@ export class BookingController {
       } else {
         // Anonymous booking — require name and phone
         if (!clientName || !clientPhone) {
-          res.status(400).json({ error: 'Client name and phone are required for anonymous bookings' });
-          return;
+          throw Object.assign(new Error('Client name and phone are required for anonymous bookings'), { statusCode: 400 });
         }
         let client = await prisma.user.findUnique({ where: { phone: clientPhone } });
         if (!client) {

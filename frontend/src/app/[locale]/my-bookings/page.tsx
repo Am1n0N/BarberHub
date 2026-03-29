@@ -49,9 +49,9 @@ export default function MyBookingsPage() {
     try {
       setLoading(true);
       const data = await api.getMyBookings();
-      setBookings((data as unknown[]).map((b) => transformBooking(b, locale)));
+      setBookings(data.map((b) => transformBooking(b, locale)));
     } catch {
-      // silently handle
+      // Data will show as empty — user sees empty state UI
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,8 @@ export default function MyBookingsPage() {
         prev.map((b) => (b.id === id ? { ...b, status: 'CANCELLED' as const } : b))
       );
     } catch {
-      // silently handle
+      // On failure, refresh the list to show accurate state
+      fetchBookings();
     } finally {
       setCancellingId(null);
     }

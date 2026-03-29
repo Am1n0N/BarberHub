@@ -196,7 +196,7 @@ export default function BookingForm({
             className="w-full"
             onClick={handleSubmit}
             loading={loading}
-            disabled={!isAuthenticated && (!clientName || !clientPhone)}
+            disabled={!isAuthenticated && (!clientName.trim() || !clientPhone.trim())}
           >
             {isRtl ? '✅ أكّد الرندي-فو' : '✅ Confirmer le rendez-vous'}
           </Button>
