@@ -1,66 +1,86 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { getTranslation } from '@/i18n/config';
 import { Service } from '@/lib/types';
+import { api } from '@/lib/api';
+import { useShop } from '@/hooks/useShop';
+import { transformService } from '@/lib/transformers';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import Badge from '@/components/ui/Badge';
+import Loading from '@/components/ui/Loading';
 import { formatPrice, formatDuration } from '@/lib/utils';
-
-const initialServices: Service[] = [
-  { _id: 'sv1', shop: 's1', name: 'حلاقة بسيطة', nameFr: 'Coupe simple', price: 15, duration: 20, isActive: true },
-  { _id: 'sv2', shop: 's1', name: 'لحية', nameFr: 'Taille de barbe', price: 10, duration: 15, isActive: true },
-  { _id: 'sv3', shop: 's1', name: 'باكاج كامل', nameFr: 'Forfait complet', price: 30, duration: 40, isActive: true },
-  { _id: 'sv4', shop: 's1', name: 'حلاقة صغار', nameFr: 'Coupe enfant', price: 10, duration: 15, isActive: true },
-];
 
 export default function ServicesPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = getTranslation(locale);
   const isRtl = locale === 'derja';
+  const { shop, loading: shopLoading } = useShop();
 
-  const [services, setServices] = useState<Service[]>(initialServices);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [form, setForm] = useState({ name: '', nameFr: '', price: '', duration: '' });
 
-  const toggleActive = (id: string) => {
-    setServices((prev) =>
-      prev.map((s) => (s._id === id ? { ...s, isActive: !s.isActive } : s))
-    );
+  const fetchServices = useCallback(async () => {
+    if (!shop) return;
+    try {
+      setLoading(true);
+      const data = await api.getShopServices(shop.id);
+      setServices((data as unknown[]).map((s) => transformService(s, locale)));
+    } catch {
+      // Silently handle
+    } finally {
+      setLoading(false);
+    }
+  }, [shop, locale]);
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
+
+  const toggleActive = async (id: string) => {
+    if (!shop) return;
+    const service = services.find((s) => s._id === id);
+    if (!service) return;
+    try {
+      await api.updateService(shop.id, id, { isActive: !service.isActive } as Partial<Service>);
+      await fetchServices();
+    } catch {
+      // Silently handle
+    }
   };
 
-  const handleSave = () => {
-    if (!form.name || !form.nameFr || !form.price || !form.duration) return;
+  const handleSave = async () => {
+    if (!form.name || !form.nameFr || !form.price || !form.duration || !shop) return;
 
-    if (editingService) {
-      setServices((prev) =>
-        prev.map((s) =>
-          s._id === editingService._id
-            ? { ...s, name: form.name, nameFr: form.nameFr, price: parseFloat(form.price), duration: parseInt(form.duration) }
-            : s
-        )
-      );
-    } else {
-      setServices((prev) => {
-        const newService: Service = {
-          _id: `sv-${prev.length + 1}-${Math.random().toString(36).slice(2, 7)}`,
-          shop: 's1',
-          name: form.name,
+    try {
+      if (editingService) {
+        await api.updateService(shop.id, editingService._id, {
+          nameDerja: form.name,
           nameFr: form.nameFr,
           price: parseFloat(form.price),
-          duration: parseInt(form.duration),
-          isActive: true,
-        };
-        return [...prev, newService];
-      });
+          durationMin: parseInt(form.duration),
+        } as Record<string, unknown> as Partial<Service>);
+      } else {
+        await api.createService(shop.id, {
+          nameDerja: form.name,
+          nameFr: form.nameFr,
+          price: parseFloat(form.price),
+          durationMin: parseInt(form.duration),
+        });
+      }
+      await fetchServices();
+      closeModal();
+    } catch {
+      // Silently handle
     }
-    closeModal();
   };
 
   const openEdit = (service: Service) => {
@@ -79,9 +99,19 @@ export default function ServicesPage() {
     setForm({ name: '', nameFr: '', price: '', duration: '' });
   };
 
-  const handleDelete = (id: string) => {
-    setServices((prev) => prev.filter((s) => s._id !== id));
+  const handleDelete = async (id: string) => {
+    if (!shop) return;
+    try {
+      await api.deleteService(shop.id, id);
+      await fetchServices();
+    } catch {
+      // Silently handle
+    }
   };
+
+  if (shopLoading || loading) {
+    return <Loading />;
+  }
 
   return (
     <div>
@@ -91,6 +121,12 @@ export default function ServicesPage() {
           {isRtl ? '➕ أضف خدمة' : '➕ Ajouter un service'}
         </Button>
       </div>
+
+      {services.length === 0 && (
+        <div className="text-center py-12 text-gray-400">
+          {isRtl ? 'ما فمّاش خدمات' : 'Aucun service'}
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {services.map((service) => (

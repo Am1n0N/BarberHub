@@ -1,81 +1,63 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { getTranslation } from '@/i18n/config';
 import { Booking } from '@/lib/types';
+import { api } from '@/lib/api';
+import { useShop } from '@/hooks/useShop';
+import { transformBooking } from '@/lib/transformers';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-
-const mockBookings: Booking[] = [
-  {
-    _id: '1',
-    shop: 's1',
-    client: 'c1',
-    clientName: 'أحمد بن صالح',
-    clientPhone: '55123456',
-    barber: 'b1',
-    barberName: 'سامي',
-    service: 'sv1',
-    serviceName: 'حلاقة بسيطة',
-    date: new Date().toISOString().split('T')[0],
-    timeSlot: '10:00',
-    status: 'CONFIRMED',
-    depositAmount: 5,
-    depositPaid: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    _id: '2',
-    shop: 's1',
-    client: 'c2',
-    clientName: 'محمد العربي',
-    clientPhone: '55789012',
-    barber: 'b2',
-    barberName: 'كريم',
-    service: 'sv2',
-    serviceName: 'باكاج كامل',
-    date: new Date().toISOString().split('T')[0],
-    timeSlot: '11:30',
-    status: 'PENDING',
-    depositAmount: 10,
-    depositPaid: false,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    _id: '3',
-    shop: 's1',
-    client: 'c3',
-    clientName: 'يوسف',
-    clientPhone: '55345678',
-    barber: 'b1',
-    barberName: 'سامي',
-    service: 'sv1',
-    serviceName: 'لحية',
-    date: new Date().toISOString().split('T')[0],
-    timeSlot: '14:00',
-    status: 'CONFIRMED',
-    depositAmount: 0,
-    depositPaid: false,
-    createdAt: new Date().toISOString(),
-  },
-];
+import Loading from '@/components/ui/Loading';
 
 export default function BookingsPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = getTranslation(locale);
   const isRtl = locale === 'derja';
+  const { shop, loading: shopLoading } = useShop();
 
-  const [bookings] = useState<Booking[]>(mockBookings);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+
+  const fetchBookings = useCallback(async () => {
+    if (!shop) return;
+    try {
+      setLoading(true);
+      const data = await api.getShopBookings(shop.id);
+      setBookings((data as unknown[]).map((b) => transformBooking(b, locale)));
+    } catch {
+      // Silently handle
+    } finally {
+      setLoading(false);
+    }
+  }, [shop, locale]);
+
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   const filteredBookings = filter === 'all' ? bookings : bookings.filter((b) => b.status === filter);
 
   const statusLabels: Record<string, string> = isRtl
     ? { PENDING: 'يستنى', CONFIRMED: 'مأكّد', CANCELLED: 'ملغي', COMPLETED: 'كمل', NO_SHOW: 'ما جاش' }
     : { PENDING: 'En attente', CONFIRMED: 'Confirmé', CANCELLED: 'Annulé', COMPLETED: 'Terminé', NO_SHOW: 'Absent' };
+
+  const handleUpdateStatus = async (id: string, status: string) => {
+    try {
+      await api.updateBookingStatus(id, status);
+      await fetchBookings();
+    } catch {
+      // Silently handle
+    }
+  };
+
+  if (shopLoading || loading) {
+    return <Loading />;
+  }
 
   return (
     <div>
@@ -102,6 +84,11 @@ export default function BookingsPage() {
 
       {/* Bookings List */}
       <div className="space-y-3">
+        {filteredBookings.length === 0 && (
+          <div className="text-center py-12 text-gray-400">
+            {isRtl ? 'ما فمّاش رندي-فو' : 'Aucun rendez-vous'}
+          </div>
+        )}
         {filteredBookings.map((booking) => (
           <Card key={booking._id}>
             <div className="flex items-start justify-between">
@@ -126,16 +113,16 @@ export default function BookingsPage() {
             <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
               {booking.status === 'PENDING' && (
                 <>
-                  <Button size="sm" variant="primary">
+                  <Button size="sm" variant="primary" onClick={() => handleUpdateStatus(booking._id, 'CONFIRMED')}>
                     {isRtl ? 'أكّد' : 'Confirmer'}
                   </Button>
-                  <Button size="sm" variant="danger">
+                  <Button size="sm" variant="danger" onClick={() => handleUpdateStatus(booking._id, 'CANCELLED')}>
                     {isRtl ? 'ألغي' : 'Annuler'}
                   </Button>
                 </>
               )}
               {booking.status === 'CONFIRMED' && (
-                <Button size="sm" variant="primary">
+                <Button size="sm" variant="primary" onClick={() => handleUpdateStatus(booking._id, 'CHECKED_IN')}>
                   {isRtl ? 'أضف للصف' : 'Ajouter à la file'}
                 </Button>
               )}

@@ -29,6 +29,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  getMe: () =>
+    fetchApi<import('./types').MeResponse>('/auth/me'),
 
   // Shops
   listShops: () => fetchApi<import('./types').ShopMapItem[]>('/shops'),
@@ -36,7 +38,7 @@ export const api = {
   getShopServices: (shopId: string) => fetchApi<import('./types').Service[]>(`/shops/${shopId}/services`),
   getShopBarbers: (shopId: string) => fetchApi<import('./types').Barber[]>(`/shops/${shopId}/barbers`),
   updateShop: (shopId: string, data: Partial<import('./types').Shop>) =>
-    fetchApi<import('./types').Shop>(`/shops/${shopId}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    fetchApi<import('./types').Shop>(`/shops/${shopId}`, { method: 'PUT', body: JSON.stringify(data) }),
 
   // Bookings
   createBooking: (data: Partial<import('./types').Booking>) =>
@@ -51,7 +53,7 @@ export const api = {
 
   // Queue
   getQueue: (shopId: string) => fetchApi<import('./types').QueueEntry[]>(`/queue/shop/${shopId}`),
-  addToQueue: (data: Partial<import('./types').QueueEntry>) =>
+  addToQueue: (data: { shopId: string; clientName: string; clientId?: string; barberId?: string; serviceId?: string }) =>
     fetchApi<import('./types').QueueEntry>('/queue', { method: 'POST', body: JSON.stringify(data) }),
   startService: (id: string) =>
     fetchApi<import('./types').QueueEntry>(`/queue/${id}/start`, { method: 'PATCH' }),
@@ -73,21 +75,21 @@ export const api = {
   markPaid: (id: string) =>
     fetchApi<import('./types').Payout>(`/payouts/${id}/mark-paid`, { method: 'POST' }),
 
-  // Services
-  createService: (data: Partial<import('./types').Service>) =>
-    fetchApi<import('./types').Service>('/services', { method: 'POST', body: JSON.stringify(data) }),
-  updateService: (id: string, data: Partial<import('./types').Service>) =>
-    fetchApi<import('./types').Service>(`/services/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
-  deleteService: (id: string) =>
-    fetchApi(`/services/${id}`, { method: 'DELETE' }),
+  // Services (shop-scoped)
+  createService: (shopId: string, data: { nameDerja: string; nameFr: string; price: number; durationMin?: number }) =>
+    fetchApi<import('./types').Service>(`/shops/${shopId}/services`, { method: 'POST', body: JSON.stringify(data) }),
+  updateService: (shopId: string, serviceId: string, data: Partial<import('./types').Service>) =>
+    fetchApi<import('./types').Service>(`/shops/${shopId}/services/${serviceId}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  deleteService: (shopId: string, serviceId: string) =>
+    fetchApi(`/shops/${shopId}/services/${serviceId}`, { method: 'DELETE' }),
 
-  // Barbers
-  createBarber: (data: Partial<import('./types').Barber>) =>
-    fetchApi<import('./types').Barber>('/barbers', { method: 'POST', body: JSON.stringify(data) }),
-  updateBarber: (id: string, data: Partial<import('./types').Barber>) =>
-    fetchApi<import('./types').Barber>(`/barbers/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
-  toggleBarberAvailability: (id: string) =>
-    fetchApi<import('./types').Barber>(`/barbers/${id}/toggle-availability`, { method: 'PATCH' }),
+  // Barbers (shop-scoped)
+  createBarber: (shopId: string, data: { userId: string; commissionRate?: number }) =>
+    fetchApi<import('./types').Barber>(`/shops/${shopId}/barbers`, { method: 'POST', body: JSON.stringify(data) }),
+  updateBarber: (shopId: string, barberId: string, data: { commissionRate?: number }) =>
+    fetchApi<import('./types').Barber>(`/shops/${shopId}/barbers/${barberId}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  toggleBarberAvailability: (shopId: string, barberId: string) =>
+    fetchApi<import('./types').Barber>(`/shops/${shopId}/barbers/${barberId}/toggle-availability`, { method: 'PATCH' }),
 
   // Admin
   adminListShops: (page = 1) =>
