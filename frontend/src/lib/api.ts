@@ -33,7 +33,8 @@ export const api = {
     fetchApi<import('./types').MeResponse>('/auth/me'),
 
   // Shops
-  listShops: () => fetchApi<import('./types').ShopMapItem[]>('/shops'),
+  listShops: (gender?: string) =>
+    fetchApi<import('./types').ShopMapItem[]>(`/shops${gender ? `?gender=${gender}` : ''}`),
   getShop: (slug: string) => fetchApi<import('./types').Shop>(`/shops/${slug}`),
   getShopServices: (shopId: string) => fetchApi<import('./types').Service[]>(`/shops/${shopId}/services`),
   getShopBarbers: (shopId: string) => fetchApi<import('./types').Barber[]>(`/shops/${shopId}/barbers`),
@@ -41,6 +42,10 @@ export const api = {
     fetchApi<import('./types').Shop>(`/shops/${shopId}`, { method: 'PUT', body: JSON.stringify(data) }),
 
   // Bookings
+  getAvailableSlots: (params: { shopId: string; barberId: string; serviceId: string; date: string }) =>
+    fetchApi<{ slots: { time: string; available: boolean }[]; duration: number; date: string }>(
+      `/bookings/available-slots?shopId=${params.shopId}&barberId=${params.barberId}&serviceId=${params.serviceId}&date=${params.date}`
+    ),
   createBooking: (data: Partial<import('./types').Booking>) =>
     fetchApi<import('./types').Booking>('/bookings', { method: 'POST', body: JSON.stringify(data) }),
   getShopBookings: (shopId: string) =>
@@ -111,6 +116,7 @@ export const api = {
   adminCreateShop: (data: {
     ownerName: string; ownerPhone: string; ownerPassword: string;
     shopName: string; address: string; city: string; phone: string;
+    gender?: string;
     latitude?: number; longitude?: number;
   }) =>
     fetchApi<{ shop: import('./types').AdminShop; user: import('./types').User }>('/admin/shops', {
@@ -132,7 +138,7 @@ export const api = {
   // Join requests (public)
   submitJoinRequest: (data: {
     ownerName: string; ownerPhone: string; ownerEmail?: string; shopName: string;
-    address: string; city: string; message?: string;
+    address: string; city: string; gender?: string; message?: string;
   }) =>
     fetchApi<import('./types').ShopRequest>('/join-requests', {
       method: 'POST',

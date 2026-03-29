@@ -15,6 +15,7 @@ interface JoinForm {
   shopName: string;
   address: string;
   city: string;
+  gender: string;
   message: string;
 }
 
@@ -25,6 +26,7 @@ const emptyForm: JoinForm = {
   shopName: '',
   address: '',
   city: '',
+  gender: 'MEN',
   message: '',
 };
 
@@ -50,6 +52,7 @@ export default function JoinPage() {
         ...form,
         ownerEmail: form.ownerEmail || undefined,
         message: form.message || undefined,
+        gender: form.gender || undefined,
       });
       setSubmitted(true);
     } catch (e: unknown) {
@@ -199,6 +202,35 @@ export default function JoinPage() {
                   onChange={(e) => setForm({ ...form, city: e.target.value })}
                   placeholder={isRtl ? 'مثلاً: تونس' : 'Ex : Tunis'}
                 />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    {isRtl ? 'نوع الحانوت *' : 'Type de salon *'}
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { value: 'MEN', label: isRtl ? '💈 رجال' : '💈 Hommes', color: 'blue' },
+                      { value: 'WOMEN', label: isRtl ? '💅 نساء' : '💅 Femmes', color: 'pink' },
+                      { value: 'UNISEX', label: isRtl ? '✨ مختلط' : '✨ Mixte', color: 'purple' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setForm({ ...form, gender: opt.value })}
+                        className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all border-2 ${
+                          form.gender === opt.value
+                            ? opt.color === 'pink'
+                              ? 'border-pink-500 bg-pink-50 text-pink-700'
+                              : opt.color === 'purple'
+                                ? 'border-purple-500 bg-purple-50 text-purple-700'
+                                : 'border-blue-500 bg-blue-50 text-blue-700'
+                            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     {isRtl ? 'رسالة إضافية (اختياري)' : 'Message supplémentaire (optionnel)'}

@@ -10,6 +10,7 @@ import TimeSlotPicker from './TimeSlotPicker';
 
 interface BookingFormProps {
   locale?: string;
+  shopId: string;
   services: Service[];
   barbers: Barber[];
   onSubmit: (data: {
@@ -25,6 +26,7 @@ interface BookingFormProps {
 
 export default function BookingForm({
   locale = 'derja',
+  shopId,
   services,
   barbers,
   onSubmit,
@@ -111,6 +113,9 @@ export default function BookingForm({
       {step === 3 && (
         <TimeSlotPicker
           locale={locale}
+          shopId={shopId}
+          barberId={selectedBarber}
+          serviceId={selectedService}
           selectedDate={selectedDate}
           selectedTime={selectedTime}
           onDateChange={setSelectedDate}
