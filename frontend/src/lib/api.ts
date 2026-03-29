@@ -45,6 +45,10 @@ export const api = {
     fetchApi<import('./types').Booking>('/bookings', { method: 'POST', body: JSON.stringify(data) }),
   getShopBookings: (shopId: string) =>
     fetchApi<import('./types').Booking[]>(`/bookings/shop/${shopId}`),
+  getMyBookings: () =>
+    fetchApi<import('./types').Booking[]>('/bookings/my'),
+  cancelBooking: (id: string) =>
+    fetchApi<import('./types').Booking>(`/bookings/${id}/cancel`, { method: 'PATCH' }),
   updateBookingStatus: (id: string, status: string) =>
     fetchApi<import('./types').Booking>(`/bookings/${id}/status`, {
       method: 'PATCH',

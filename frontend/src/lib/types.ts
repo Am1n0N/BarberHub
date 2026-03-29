@@ -57,6 +57,8 @@ export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' 
 export interface Booking {
   id: string;
   shop: string;
+  shopName?: string;
+  shopAddress?: string;
   client: string;
   clientName: string;
   clientPhone: string;
@@ -64,6 +66,7 @@ export interface Booking {
   barberName?: string;
   service: string;
   serviceName?: string;
+  servicePrice?: number;
   date: string;
   timeSlot: string;
   status: BookingStatus;

@@ -21,6 +21,13 @@ router.post(
 );
 
 router.get(
+  '/my',
+  authenticate,
+  authorize('CLIENT', 'ADMIN'),
+  (req, res, next) => bookingController.getMyBookings(req, res, next)
+);
+
+router.get(
   '/shop/:shopId',
   authenticate,
   authorize('OWNER', 'BARBER', 'ADMIN'),
@@ -47,6 +54,13 @@ router.patch(
       .withMessage('Invalid status'),
   ]),
   (req, res, next) => bookingController.updateStatus(req, res, next)
+);
+
+router.patch(
+  '/:id/cancel',
+  authenticate,
+  authorize('CLIENT', 'ADMIN'),
+  (req, res, next) => bookingController.cancelBooking(req, res, next)
 );
 
 router.patch(

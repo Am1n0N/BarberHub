@@ -93,6 +93,56 @@ export class BookingService {
     return bookings;
   }
 
+  async getBookingsForClient(clientId: string) {
+    const bookings = await prisma.booking.findMany({
+      where: { clientId },
+      include: {
+        shop: { select: { id: true, name: true, slug: true, address: true, city: true, phone: true } },
+        barber: {
+          include: {
+            user: { select: { id: true, name: true } },
+          },
+        },
+        service: true,
+      },
+      orderBy: [{ date: 'desc' }, { timeSlot: 'desc' }],
+    });
+
+    return bookings;
+  }
+
+  async cancelBookingByClient(bookingId: string, clientId: string) {
+    const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
+
+    if (!booking) {
+      throw Object.assign(new Error('Booking not found'), { statusCode: 404 });
+    }
+
+    if (booking.clientId !== clientId) {
+      throw Object.assign(new Error('Not authorized to cancel this booking'), { statusCode: 403 });
+    }
+
+    if (!['PENDING', 'CONFIRMED', 'DEPOSIT_PAID'].includes(booking.status)) {
+      throw Object.assign(new Error('Cannot cancel a booking that is already in progress or completed'), { statusCode: 400 });
+    }
+
+    const updated = await prisma.booking.update({
+      where: { id: bookingId },
+      data: { status: 'CANCELLED' },
+      include: {
+        shop: { select: { id: true, name: true, slug: true, address: true, city: true, phone: true } },
+        barber: {
+          include: {
+            user: { select: { id: true, name: true } },
+          },
+        },
+        service: true,
+      },
+    });
+
+    return updated;
+  }
+
   async updateBookingStatus(
     id: string,
     status: string

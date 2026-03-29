@@ -50,6 +50,27 @@ export class BookingController {
     }
   }
 
+  async getMyBookings(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const bookings = await bookingService.getBookingsForClient(req.user!.id);
+      res.json(bookings);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async cancelBooking(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const booking = await bookingService.cancelBookingByClient(
+        req.params.id as string,
+        req.user!.id
+      );
+      res.json(booking);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async updateStatus(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { status } = req.body;

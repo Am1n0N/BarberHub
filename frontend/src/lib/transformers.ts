@@ -52,18 +52,21 @@ export function transformBarber(barber: any): Barber {
 export function transformBooking(booking: any, locale = 'derja'): Booking {
   return {
     id: booking.id ?? booking._id,
-    shop: booking.shopId ?? booking.shop,
-    client: booking.clientId ?? booking.client,
+    shop: booking.shopId ?? booking.shop?.id ?? booking.shop,
+    shopName: booking.shop?.name ?? booking.shopName,
+    shopAddress: booking.shop?.address ?? booking.shopAddress,
+    client: booking.clientId ?? booking.client?.id ?? booking.client,
     clientName: booking.client?.name ?? booking.clientName ?? '',
     clientPhone: booking.client?.phone ?? booking.clientPhone ?? '',
-    barber: booking.barberId ?? booking.barber,
+    barber: booking.barberId ?? booking.barber?.id ?? booking.barber,
     barberName: booking.barber?.user?.name ?? booking.barberName,
-    service: booking.serviceId ?? booking.service,
+    service: booking.serviceId ?? booking.service?.id ?? booking.service,
     serviceName: booking.service
       ? (typeof booking.service === 'string'
         ? booking.serviceName
         : (locale === 'derja' ? booking.service.nameDerja : booking.service.nameFr))
       : booking.serviceName,
+    servicePrice: booking.service?.price ?? booking.servicePrice,
     date: booking.date,
     timeSlot: booking.timeSlot,
     status: booking.status,
